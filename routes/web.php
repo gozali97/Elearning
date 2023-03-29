@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ManageGuruController;
 use App\Http\Controllers\Guru\GuruController;
 use App\Http\Controllers\Siswa\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,11 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+
+    Route::controller(ManageGuruController::class)->group(function () {
+        Route::get('/manageGuru', 'index')->name('manageGuru.index');
+        Route::get('/manageGuru/update', 'index')->name('manageGuru.update');
+    });
 
 });
 

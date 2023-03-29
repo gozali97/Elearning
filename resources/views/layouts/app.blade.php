@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="{{ url('/assets/vendors/perfect-scrollbar/perfect-scrollbar.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/vendors/bootstrap-icons/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/css/app.css') }}">
+    <link rel="stylesheet" href="{{ url('/assets/vendors/simple-datatables/style.css') }}">
+    <link rel="stylesheet" href="{{ url('/assets/vendors/sweetalert2/sweetalert2.min.css') }}">
     <link rel="shortcut icon" href="{{ url('/assets/images/favicon.svg') }}" type="image/x-icon">
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
@@ -44,7 +46,7 @@
             </header>
             {{-- @include('layouts.header') --}}
             <div class="page-heading">
-                <h3>Profile Statistics</h3>
+                <h3>Elearning</h3>
             </div>
 
             <div class="page-content">
@@ -60,6 +62,14 @@
     <script src="{{ url('/assets/vendors/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ url('/assets/js/pages/dashboard.js') }}"></script>
 
+    <script src="{{ url('/assets/js/extensions/sweetalert2.js') }}"></script>
+    <script src="{{ url('/assets/vendors/sweetalert2/sweetalert2.all.min.js') }}"></script>
+    <script src="{{ url('/assets/vendors/simple-datatables/simple-datatables.js') }}"></script>
+    <script>
+        // Simple Datatable
+        let table1 = document.querySelector('#table1');
+        let dataTable = new simpleDatatables.DataTable(table1);
+    </script>
     <script src="{{ url('/assets/js/main.js') }}"></script>
 </body>
 

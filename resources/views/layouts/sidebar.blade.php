@@ -14,37 +14,79 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <li class="sidebar-item active ">
+                @auth
+                <!-- Dashboard -->
+                @if (Auth::user()->role->name === 'admin')
+
+                <li class="sidebar-item {{ request()->is('admin*') ? 'active' : '' }}">
+                    <a href="/admin" class='sidebar-link'>
+                        <i class="bi bi-grid-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item has-sub">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-stack"></i>
+                        <span>Laporan</span>
+                    </a>
+                    <ul class="submenu ">
+                        <li class="submenu-item {{ request()->is('laporan*') ? 'active' : '' }}">
+                            <a href="/laporan">Data Laporan</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="sidebar-item {{ request()->is('manageGuru*') ? 'active' : '' }}">
+                    <a href="/manageGuru" class='sidebar-link'>
+                        <i class="bi bi-person-circle"></i>
+                        <span>Manajemen Guru</span>
+                    </a>
+                </li>
+                @elseif (Auth::user()->role->name === 'guru')
+
+                <li class="sidebar-item {{ request()->is('admin*') ? 'active' : '' }}">
                     <a href="index.html" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item  has-sub">
+                <li class="sidebar-item has-sub">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-stack"></i>
                         <span>Laporan</span>
                     </a>
                     <ul class="submenu ">
-                        <li class="submenu-item ">
-                            <a href="component-alert.html">Data Laporan</a>
+                        <li class="submenu-item {{ request()->is('laporan*') ? 'active' : '' }}">
+                            <a href="/laporan">Data Laporan</a>
                         </li>
                     </ul>
                 </li>
-
+                @endif
                 <li class="sidebar-item  ">
-                    <a class="sidebar-link" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                             document.getElementById('logout-form').submit();">
-                                <i class="bi bi-box-arrow-in-left"></i></i> <span>Logout</span>
-                            </a>
-
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
+                    <a href="#" class="sidebar-link" onclick="event.preventDefault(); Swal.fire({
+                                title: 'Apakah anda yakin?',
+                                text: 'Anda akan keluar dari web!',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Ya, Keluar!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        document.getElementById('logout-form').submit();
+                                    }
+                                });">
+                        <i class="bi bi-box-arrow-in-left"></i></i> <span>Logout</span>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
                 </li>
-
+                @else
+                <li><a href="{{ route('login') }}">Login</a></li>
+                <li><a href="{{ route('register') }}">Register</a></li>
+                @endauth
             </ul>
         </div>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
