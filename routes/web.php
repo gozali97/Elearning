@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Guru\GuruController;
+use App\Http\Controllers\Siswa\UserController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +19,26 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+
+});
+
+
+Route::middleware(['auth', 'role:guru'])->group(function () {
+    Route::get('/guru', [GuruController::class, 'index'])->name('guru');
+
+});
+
+
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/user', [UserController::class, 'index'])->name('user');
 });
