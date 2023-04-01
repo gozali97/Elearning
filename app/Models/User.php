@@ -49,4 +49,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function komentar()
+    {
+        return $this->hasMany(Komentar::class);
+    }
+    
+    public function mapel()
+    {
+        return $this->hasMany(MataPelajaran::class);
+    }
 }
