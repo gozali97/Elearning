@@ -14,12 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('materis', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id_materi');
             $table->string('mapel_id');
-            $table->string('name')->nullable();
+            $table->string('nama_materi')->nullable();
             $table->string('deskripsi');
-            $table->string('inp_materi');
-            $table->timestamp('create');
+            $table->string('gambar')->nullable();
+            $table->integer('create_by');
             $table->timestamps();
         });
     }

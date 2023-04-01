@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('mata_pelajarans', function (Blueprint $table) {
-            $table->id();
-            $table->string('jurusan_id');
+            $table->increments('kode_mapel');
+            $table->integer('kelas_id');
+            $table->integer('jurusan_id');
             $table->string('guru_id');
-            $table->string('kode_mapel')->unique()->nullable();
-            $table->string('name')->nullable();
+            $table->string('nama_mapel')->nullable();
 
             $table->timestamps();
         });
