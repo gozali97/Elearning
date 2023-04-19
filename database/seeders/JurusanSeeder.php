@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Role;
+use App\Models\Jurusan;
 
-class RoleSeeder extends Seeder
+class JurusanSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,8 +15,8 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'guru']);
-        Role::create(['name' => 'user']);
+        Jurusan::create(['nama_jurusan' => 'MIPA']);
+        Jurusan::create(['nama_jurusan' => 'IPS']);
+        Jurusan::create(['nama_jurusan' => 'AGAMA']);
     }
 }

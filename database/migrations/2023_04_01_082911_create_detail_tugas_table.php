@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('siswa_id');
             $table->string('file');
             $table->integer('nilai');
-            $table->dateTime('submit');
+            // $table->dateTime('submit');
             $table->timestamps();
         });
     }
