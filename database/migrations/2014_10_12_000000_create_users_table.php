@@ -27,6 +27,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+    //php artisan make:model --help, php artisan make:model {Todo} -ms
 
     /**
      * Reverse the migrations.

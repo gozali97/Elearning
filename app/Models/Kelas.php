@@ -12,4 +12,19 @@ class Kelas extends Model
     protected $primaryKey = 'id_kelas';
     // public $incrementing = false;
     protected $guarded = [];
+
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class);
+    }
+
+    public function siswa()
+    {
+        return $this->hasMany(Siswa::class);
+    }
+
+    public function jadwal()
+    {   
+        return $this->hasMany(JadwalPelajaran::class);
+    }
 }

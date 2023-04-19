@@ -50,13 +50,13 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function komentar()
+    public function siswa()
     {
-        return $this->hasMany(Komentar::class);
+        return $this->hasOne(Siswa::class);
     }
-    
-    public function mapel()
+
+    public function guru()
     {
-        return $this->hasMany(MataPelajaran::class);
+        return $this->hasOne(Guru::class);
     }
 }

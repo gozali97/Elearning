@@ -15,11 +15,8 @@ return new class extends Migration
     {
         Schema::create('mata_pelajarans', function (Blueprint $table) {
             $table->increments('kode_mapel');
-            $table->integer('kelas_id');
-            $table->integer('jurusan_id');
-            $table->string('guru_id');
-            $table->string('nama_mapel')->nullable();
-
+            $table->string('nama_mapel');
+            $table->string('deskripsi')->nullable();
             $table->timestamps();
         });
     }

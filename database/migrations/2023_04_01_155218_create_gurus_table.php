@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('gurus', function (Blueprint $table) {
             $table->increments('id_guru');
-            $table->integer('role_id');
-            $table->string('jenis_kelamin');
-            $table->text('alamat');
+            $table->string('email');
+            $table->string('NIP')->nullable();
+            $table->string('jabatan_guru');
+            $table->text('alamat')->nullable();
             $table->timestamps();
         });
     }

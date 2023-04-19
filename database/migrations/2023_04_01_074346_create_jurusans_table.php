@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('jurusans', function (Blueprint $table) {
             $table->increments('id_jurusan');
-            $table->integer('id_siswa');
             $table->string('nama_jurusan')->unique()->nullable();
             $table->timestamps();
         });
