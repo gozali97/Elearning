@@ -25,14 +25,17 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item has-sub">
+                <li class="sidebar-item has-sub {{ request()->is('kelas*', 'jurusan*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
-                        <i class="bi bi-stack"></i>
-                        <span>Laporan</span>
+                        <i class="bi bi-box"></i>
+                        <span>Master Data</span>
                     </a>
                     <ul class="submenu ">
-                        <li class="submenu-item {{ request()->is('laporan*') ? 'active' : '' }}">
-                            <a href="/laporan">Data Laporan</a>
+                        <li class="submenu-item">
+                            <a href="/jurusan">Data Jurusan</a>
+                        </li>
+                        <li class="submenu-item">
+                            <a href="/kelas">Data Kelas</a>
                         </li>
                     </ul>
                 </li>

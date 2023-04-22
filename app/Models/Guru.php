@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Guru extends Model
 {
     use HasFactory;
+    protected $table = 'guru';
+    protected $guarded = [];
+    protected $primaryKey = 'nip';
 
     public function users()
     {
@@ -15,10 +18,10 @@ class Guru extends Model
     }
 
     public function jadwal()
-    {   
+    {
         return $this->hasOne(JadwalPelajaran::class);
     }
-    
+
     public function komentar()
     {
         return $this->hasMany(Komentar::class);

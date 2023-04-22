@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminJurusanController;
+use App\Http\Controllers\Admin\AdminKelasController as AdminAdminKelasController;
 use App\Http\Controllers\Admin\ManageGuruController;
+use App\Http\Controllers\AdminKelasController;
 use App\Http\Controllers\Guru\GuruController;
 use App\Http\Controllers\Siswa\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +36,26 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::controller(ManageGuruController::class)->group(function () {
         Route::get('/manageGuru', 'index')->name('manageGuru.index');
-        Route::get('/manageGuru/update', 'index')->name('manageGuru.update');
+        Route::post('/manageGuru/store', 'store')->name('manageGuru.store');
+        Route::post('/manageGuru/update/{id}', 'update')->name('manageGuru.update');
+    });
+
+    Route::controller(AdminAdminKelasController::class)->group(function () {
+        Route::get('/kelas', 'index')->name('admin.kelas.index');
+        Route::get('/kelas/create', 'create')->name('admin.kelas.create');
+        Route::post('/kelas/store', 'store')->name('admin.kelas.store');
+        Route::get('/kelas/edit/{id}', 'edit')->name('admin.kelas.edit');
+        Route::post('/kelas/update/{id}', 'update')->name('admin.kelas.update');
+        Route::get('/kelas/destroy/{id}', 'destroy')->name('admin.kelas.destroy');
+    });
+
+    Route::controller(AdminJurusanController::class)->group(function () {
+        Route::get('/jurusan', 'index')->name('admin.jurusan.index');
+        Route::get('/jurusan/create', 'create')->name('admin.jurusan.create');
+        Route::post('/jurusan/store', 'store')->name('admin.jurusan.store');
+        Route::get('/jurusan/edit/{id}', 'edit')->name('admin.jurusan.edit');
+        Route::post('/jurusan/update/{id}', 'update')->name('admin.jurusan.update');
+        Route::get('/jurusan/destroy/{id}', 'destroy')->name('admin.jurusan.destroy');
     });
 
 });

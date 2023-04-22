@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('materis', function (Blueprint $table) {
             $table->integer('id_materi');
-            $table->string('mapel_id');
             $table->string('jadwal_id');
             $table->string('nama_materi')->nullable();
             $table->string('deskripsi');

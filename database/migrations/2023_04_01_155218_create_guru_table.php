@@ -13,10 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('gurus', function (Blueprint $table) {
-            $table->increments('id_guru');
+        Schema::create('guru', function (Blueprint $table) {
+            $table->string('nip')->primary();
             $table->string('email');
-            $table->string('NIP')->nullable();
             $table->string('jabatan_guru');
             $table->text('alamat')->nullable();
             $table->timestamps();
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gurus');
+        Schema::dropIfExists('guru');
     }
 };
