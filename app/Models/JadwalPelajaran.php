@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class JadwalPelajaran extends Model
 {
     use HasFactory;
+    protected $table = 'jadwal_pelajaran';
+    protected $primaryKey = 'kode_jadwal';
+
+    public $incrementing = false;
+
+    protected $guarded = [];
 
     public function kelas()
     {

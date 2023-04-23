@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('mata_pelajarans', function (Blueprint $table) {
-            $table->increments('kode_mapel');
+            $table->string('kode_mapel')->primary();
             $table->string('nama_mapel');
-            $table->string('deskripsi')->nullable();
+            $table->text('deskripsi')->nullable();
             $table->timestamps();
         });
     }

@@ -17,10 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('role_id');
-            $table->string('jenis_kelamin')->nullable();
-            $table->string('no_hp')->nullable();
-            $table->string('gambar')->nullable();
             $table->string('email')->unique();
+            $table->string('gambar')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

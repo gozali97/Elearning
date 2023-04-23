@@ -11,7 +11,7 @@ class Guru extends Model
     protected $table = 'guru';
     protected $guarded = [];
     protected $primaryKey = 'nip';
-
+    public $incrementing = false;
     public function users()
     {
         return $this->belongsTo(User::class);

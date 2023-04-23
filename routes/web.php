@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminJadwalPelajaranController;
 use App\Http\Controllers\Admin\AdminJurusanController;
 use App\Http\Controllers\Admin\AdminKelasController as AdminAdminKelasController;
+use App\Http\Controllers\Admin\AdminMataPelajaranController;
 use App\Http\Controllers\Admin\ManageGuruController;
 use App\Http\Controllers\AdminKelasController;
 use App\Http\Controllers\Guru\GuruController;
@@ -56,6 +58,24 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/jurusan/edit/{id}', 'edit')->name('admin.jurusan.edit');
         Route::post('/jurusan/update/{id}', 'update')->name('admin.jurusan.update');
         Route::get('/jurusan/destroy/{id}', 'destroy')->name('admin.jurusan.destroy');
+    });
+
+    Route::controller(AdminMataPelajaranController::class)->group(function () {
+        Route::get('/mapel', 'index')->name('admin.mapel.index');
+        Route::get('/mapel/create', 'create')->name('admin.mapel.create');
+        Route::post('/mapel/store', 'store')->name('admin.mapel.store');
+        Route::get('/mapel/edit/{id}', 'edit')->name('admin.mapel.edit');
+        Route::post('/mapel/update/{id}', 'update')->name('admin.mapel.update');
+        Route::get('/mapel/destroy/{id}', 'destroy')->name('admin.mapel.destroy');
+    });
+
+    Route::controller(AdminJadwalPelajaranController::class)->group(function () {
+        Route::get('/jadwal', 'index')->name('admin.jadwal.index');
+        Route::get('/jadwal/create', 'create')->name('admin.jadwal.create');
+        Route::post('/jadwal/store', 'store')->name('admin.jadwal.store');
+        Route::get('/jadwal/edit/{id}', 'edit')->name('admin.jadwal.edit');
+        Route::post('/jadwal/update/{id}', 'update')->name('admin.jadwal.update');
+        Route::get('/jadwal/destroy/{id}', 'destroy')->name('admin.jadwal.destroy');
     });
 
 });

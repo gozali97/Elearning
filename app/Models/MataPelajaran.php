@@ -10,7 +10,9 @@ class MataPelajaran extends Model
     use HasFactory;
     protected $table = 'mata_pelajarans';
     protected $primaryKey = 'kode_mapel';
-    // public $incrementing = false;
+
+    public $incrementing = false;
+    
     protected $guarded = [];
 
     public function jadwal()

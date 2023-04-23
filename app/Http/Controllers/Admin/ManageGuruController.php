@@ -31,7 +31,6 @@ class ManageGuruController extends Controller
         ->where('role_id', 2)
         ->where('id', $id)
         ->get();
-        dd($guru);
         return view('admin.guru.index', compact('guru'));
     }
 
@@ -57,11 +56,9 @@ class ManageGuruController extends Controller
 
             $user = new User;
             $user->name = $request->nama;
+            $user->gambar = $gambar;
             $user->role_id = 2;
             $user->email = $request->email;
-            $user->no_hp = $request->no_hp;
-            $user->jenis_kelamin = $request->gender;
-            $user->gambar = $gambar;
             $user->password = Hash::make('12345678');
 
 
@@ -79,6 +76,8 @@ class ManageGuruController extends Controller
                 Guru::create([
                     'nip' => $nip,
                     'email' =>  $user->email,
+                    'jenis_kelamin' =>   $request->gender,
+                    'no_hp' =>   $request->no_hp,
                     'alamat' => $request->alamat,
                 ]);
             }
@@ -86,7 +85,6 @@ class ManageGuruController extends Controller
             DB::commit();
             return redirect()->route('manageGuru.index')->with('success', 'Data Guru berhasil ditambahkan.');
         } catch (\Exception $e) {
-            dd($e);
             DB::rollback();
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data guru.');
         }

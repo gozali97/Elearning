@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="{{ url('/assets/vendors/simple-datatables/style.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/vendors/sweetalert2/sweetalert2.min.css') }}">
     <link rel="shortcut icon" href="{{ url('/assets/images/favicon.svg') }}" type="image/x-icon">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 
@@ -33,7 +34,7 @@
                 <div class="float-end">
                     <div class="d-flex align-items-center">
                         <div class="avatar avatar-xl">
-                            <img src="assets/images/faces/1.jpg" alt="Face 1">
+                            <img src="{{ url('/assets/img/'. Auth::user()->gambar) }}" alt="Face 1">
                         </div>
                         <div class="ms-3 name">
                             <h5 class="font-bold">{{ Auth::user()->name }}</h5>

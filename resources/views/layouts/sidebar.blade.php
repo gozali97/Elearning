@@ -25,7 +25,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item has-sub {{ request()->is('kelas*', 'jurusan*') ? 'active' : '' }}">
+                <li class="sidebar-item has-sub {{ request()->is('kelas*', 'jurusan*', 'mapel*') ? 'active' : '' }}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-box"></i>
                         <span>Master Data</span>
@@ -37,7 +37,16 @@
                         <li class="submenu-item">
                             <a href="/kelas">Data Kelas</a>
                         </li>
+                        <li class="submenu-item">
+                            <a href="/mapel">Mata Pelajaran</a>
+                        </li>
                     </ul>
+                </li>
+                <li class="sidebar-item {{ request()->is('jadwal*') ? 'active' : '' }}">
+                    <a href="/jadwal" class='sidebar-link'>
+                        <i class="bi bi-stopwatch-fill"></i>
+                        <span>Jadwal Pelajaran</span>
+                    </a>
                 </li>
 
                 <li class="sidebar-item {{ request()->is('manageGuru*') ? 'active' : '' }}">
@@ -48,16 +57,22 @@
                 </li>
                 @elseif (Auth::user()->role->name === 'guru')
 
-                <li class="sidebar-item {{ request()->is('admin*') ? 'active' : '' }}">
-                    <a href="index.html" class='sidebar-link'>
+                <li class="sidebar-item {{ request()->is('guru*') ? 'active' : '' }}">
+                    <a href="/guru" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
-
-                <li class="sidebar-item has-sub">
-                    <a href="#" class='sidebar-link'>
+                <li class="sidebar-item {{ request()->is('jadwalajar*') ? 'active' : '' }}">
+                    <a href="/jadwalajar" class='sidebar-link'>
                         <i class="bi bi-stack"></i>
+                        <span>List Mata Pelajaran</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item has-sub {{ request()->is('laporan*') ? 'active' : '' }}">
+                    <a href="#" class='sidebar-link'>
+                        <i class="bi bi-clipboard"></i>
                         <span>Laporan</span>
                     </a>
                     <ul class="submenu ">

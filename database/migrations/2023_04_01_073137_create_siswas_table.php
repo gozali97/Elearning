@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('siswas', function (Blueprint $table) {
             $table->increments('id_siswa');
+            $table->string('email');
             $table->integer('kelas_id');
             $table->integer('jurusan_id');
-            $table->string('email');
+            $table->string('jenis_kelamin')->nullable();
+            $table->string('no_hp')->nullable();
             $table->string('NIS')->nullable();
             $table->text('alamat')->nullable();
             $table->timestamps();
