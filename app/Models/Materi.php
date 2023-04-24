@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Materi extends Model
 {
     use HasFactory;
+    protected $table = 'materi';
+    protected $primaryKey = 'id_materi';
+
+    protected $guarded = [];
 
     public function mapel()
     {

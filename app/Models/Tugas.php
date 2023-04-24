@@ -9,6 +9,11 @@ class Tugas extends Model
 {
     use HasFactory;
 
+    protected $table = 'tugas';
+    protected $primaryKey = 'id_tugas';
+
+    protected $guarded = [];
+
     public function materi()
     {
         return $this->belongsTo(Materi::class);

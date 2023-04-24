@@ -15,9 +15,10 @@ return new class extends Migration
     {
         Schema::create('tugas', function (Blueprint $table) {
             $table->increments('id_tugas');
-            $table->string('materi_id');
+            $table->string('materi_id', 10);
             $table->string('nama_tugas')->nullable();
             $table->string('deskripsi');
+            $table->string('file_tugas')->nullable();
             $table->dateTime('tanggal_mulai');
             $table->dateTime('tanggal_selesai');
             $table->timestamps();

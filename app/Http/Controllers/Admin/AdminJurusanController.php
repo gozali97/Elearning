@@ -35,6 +35,7 @@ class AdminJurusanController extends Controller
     public function update(Request $request, $id)
     {
         $data = Jurusan::where('id_jurusan', $id)->first();
+
         $data->nama_jurusan = $request->nama;
         $data->save();
 

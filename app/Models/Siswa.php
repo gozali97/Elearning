@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Siswa extends Model
 {
     use HasFactory;
+    protected $table = 'siswa';
+    protected $primaryKey = 'nis';
+
+    protected $guarded = [];
 
     public function users()
     {
@@ -18,7 +22,7 @@ class Siswa extends Model
     {
         return $this->belongsTo(Jurusan::class);
     }
-    
+
     public function kelas()
     {
         return $this->belongsTo(Kelas::class);
@@ -28,7 +32,7 @@ class Siswa extends Model
     {
         return $this->hasMany(DetailTugas::class);
     }
-    
+
     public function mapel()
     {
         return $this->hasMany(MataPelajaran::class);

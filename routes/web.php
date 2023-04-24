@@ -5,9 +5,11 @@ use App\Http\Controllers\Admin\AdminJadwalPelajaranController;
 use App\Http\Controllers\Admin\AdminJurusanController;
 use App\Http\Controllers\Admin\AdminKelasController as AdminAdminKelasController;
 use App\Http\Controllers\Admin\AdminMataPelajaranController;
+use App\Http\Controllers\Admin\AdminSiswaController;
 use App\Http\Controllers\Admin\ManageGuruController;
 use App\Http\Controllers\AdminKelasController;
 use App\Http\Controllers\Guru\GuruController;
+use App\Http\Controllers\Guru\GuruMataPelajaranController;
 use App\Http\Controllers\Siswa\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -78,12 +80,33 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/jadwal/destroy/{id}', 'destroy')->name('admin.jadwal.destroy');
     });
 
+    Route::controller(AdminSiswaController::class)->group(function () {
+        Route::get('/manageSiswa', 'index')->name('admin.manageSiswa.index');
+        Route::post('/import-Siswa', 'importSiswa')->name('admin.manageSiswa.importSiswa');
+        Route::get('/manageSiswa/create', 'create')->name('admin.manageSiswa.create');
+        Route::post('/manageSiswa/store', 'store')->name('admin.manageSiswa.store');
+        Route::get('/manageSiswa/edit/{id}', 'edit')->name('admin.manageSiswa.edit');
+        Route::post('/manageSiswa/update/{id}', 'update')->name('admin.manageSiswa.update');
+        Route::get('/manageSiswa/destroy/{id}', 'destroy')->name('admin.manageSiswa.destroy');
+    });
+
 });
 
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/guru', [GuruController::class, 'index'])->name('guru');
 
+    Route::controller(GuruMataPelajaranController::class)->group(function () {
+        Route::get('/listajar', 'index')->name('guru.listajar.index');
+        Route::get('/listajar/view/{id}', 'view')->name('guru.listajar.view');
+        Route::post('/listajar/store', 'store')->name('guru.listajar.store');
+        Route::post('/listajar/storeTugas', 'storeTugas')->name('guru.listajar.storeTugas');
+        Route::post('/listajar/update/{id}', 'update')->name('guru.listajar.update');
+        Route::post('/listajar/updateTugas/{id}', 'updateTugas')->name('guru.listajar.updateTugas');
+        Route::get('/listajar/destroy/{id}', 'destroy')->name('guru.listajar.destroy');
+
+        Route::get('/listajar/listsiswa', 'indexSiswa')->name('guru.listajar.indexSiswa');
+    });
 });
 
 
