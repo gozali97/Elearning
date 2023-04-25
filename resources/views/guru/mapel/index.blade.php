@@ -33,7 +33,7 @@
             </div>
             <a href="{{  url('listajar/view', $d->kode_jadwal) }}" class="btn btn-primary mt-2 block d-inline-flex"><i
                 class="bi bi-pencil d-inline-flex mt-1"></i></a>
-            <a href="{{  url('listajar/listsiswa', $d->kode_jadwal) }}"
+            <a href="{{  url('listajar/listsiswa', $d->kode_mapel) }}"
               class="btn btn-success mt-2 block d-inline-flex"><i class="bi bi-person d-inline-flex mt-1"></i></a>
           </div>
         </div>

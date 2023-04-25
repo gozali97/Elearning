@@ -105,7 +105,9 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
         Route::post('/listajar/updateTugas/{id}', 'updateTugas')->name('guru.listajar.updateTugas');
         Route::get('/listajar/destroy/{id}', 'destroy')->name('guru.listajar.destroy');
 
-        Route::get('/listajar/listsiswa', 'indexSiswa')->name('guru.listajar.indexSiswa');
+        Route::get('/listajar/view-tugas/{id}', 'viewTugas')->name('guru.listajar.viewTugas');
+        Route::get('/listajar/listsiswa/{id}', 'viewSiswa')->name('guru.listajar.listsiswa');
+
     });
 });
 

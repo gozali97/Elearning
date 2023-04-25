@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\KelasController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\MataPelajaranController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\SiswaTugasController;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,5 +30,12 @@ Route::post('/logout', [LoginController::class, 'logout']);
 Route::post('/profil', [ProfileController::class, 'index']);
 Route::post('/kelas', [KelasController::class, 'index']);
 Route::post('/mapel', [MataPelajaranController::class, 'index']);
+
+Route::controller(SiswaTugasController::class)->group(function () {
+    Route::post('/siswa/listPelajaran', 'index')->name('siswa.lisPelajaran');
+    Route::post('/siswa/viewTugas', 'viewTugas')->name('siswa.viewTugas');
+    Route::post('/siswa/uploadTugas', 'store')->name('siswa.uploadTugas');
+    Route::post('/siswa/updateTugas', 'update')->name('siswa.updateTugas');
+});
 
 

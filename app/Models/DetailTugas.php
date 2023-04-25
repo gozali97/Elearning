@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class DetailTugas extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+    protected $tabel = 'detail_tugas';
+    protected $primaryKey = 'id_detail_tugas';
 
     public function tugas()
     {

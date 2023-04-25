@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Models\DetailTugas;
 use App\Models\Guru;
 use App\Models\JadwalPelajaran;
 use App\Models\Materi;
+use App\Models\Siswa;
 use App\Models\Tugas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,9 +44,10 @@ class GuruMataPelajaranController extends Controller
         $data = Materi::query()
             ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
             ->leftJoin('tugas', 'tugas.materi_id', 'materi.id_materi')
-            ->select('materi.*','tugas.id_tugas', 'tugas.nama_tugas', 'jadwal_pelajaran.*')
+            ->select('materi.*', 'tugas.id_tugas', 'tugas.nama_tugas', 'tugas.file_tugas', 'jadwal_pelajaran.*')
             ->where('materi.jadwal_id', $id)
             ->get();
+
 
         return view('guru.mapel.detail', compact('data', 'jadwal'));
     }
@@ -160,27 +163,57 @@ class GuruMataPelajaranController extends Controller
     public function updateTugas(Request $request, $id)
     {
         try {
-        $data = Materi::where('kode_mapel', $id)->first();
+            $data = Materi::where('kode_mapel', $id)->first();
 
-        if ($request->hasFile('file')) {
+            if ($request->hasFile('file')) {
 
-            if (file_exists(public_path('assets/dokumen/' . $data->path_file))) {
-                unlink(public_path('assets/dokumen/' . $data->path_file));
+                if (file_exists(public_path('assets/dokumen/' . $data->path_file))) {
+                    unlink(public_path('assets/dokumen/' . $data->path_file));
+                }
+
+                $file = $request->nama . '.' . $request->file->extension();
+                $path = $request->file('file')->move('assets/img', $file);
+
+                $data->path_file = $file;
             }
 
-            $file = $request->nama .'.' . $request->file->extension();
-            $path = $request->file('file')->move('assets/img', $file);
+            $data->nama_materi = $request->nama;
+            $data->deskripsi = $request->deskripsi;
+            $data->save();
 
-            $data->path_file = $file;
+            return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.', $e->getMessage());
         }
-
-        $data->nama_materi = $request->nama;
-        $data->deskripsi = $request->deskripsi;
-        $data->save();
-
-        return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.', $e->getMessage());
     }
+
+    public function viewTugas($id)
+    {
+
+        $data = DetailTugas::query()
+            ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
+            ->join('siswa', 'siswa.nis', 'detail_tugas.siswa_id')
+            ->join('users', 'users.email', 'siswa.email')
+            ->join('materi', 'materi.id_materi', 'tugas.materi_id')
+            ->where('tugas.id_tugas', $id)
+            ->get();
+            // dd($data);
+        return view('guru.mapel.upload-siswa', compact('data'));
+    }
+
+    public function viewSiswa($id)
+    {
+
+        $data = Siswa::query()
+            ->join('kelas', 'kelas.id_kelas', 'siswa.kelas_id')
+            ->join('users', 'users.email', 'siswa.email')
+            ->join('jadwal_pelajaran', 'jadwal_pelajaran.kelas_id', 'kelas.id_kelas')
+            ->join('mata_pelajarans', 'mata_pelajarans.kode_mapel', 'jadwal_pelajaran.mapel_id')
+            ->where('mata_pelajarans.kode_mapel', $id)
+            ->get();
+
+            // dd($data);
+
+        return view('guru.mapel.viewSiswa', compact('data'));
     }
 }
