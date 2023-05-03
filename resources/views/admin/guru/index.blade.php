@@ -14,13 +14,12 @@
                 <div class="card-body">
                     <div class="mt-2 d-flex flex-row-reverse">
                         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                            data-bs-target="#insertModal" class="btn icon icon-left btn-success"><svg
-                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-check-circle">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg> Tambah</button>
+                        data-bs-target="#insertModal" class="btn icon icon-left btn-success d-inline-flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill d-inline-flex mb-1" viewBox="0 0 16 16">
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                          </svg>
+                        Tambah</button>
                     </div>
                     <div class="container p-3">
                         <table class="table table-striped" id="table1">
@@ -128,8 +127,7 @@
                                                         <i class="bx bx-x d-block d-sm-none"></i>
                                                         <span class="d-none d-sm-block">Close</span>
                                                     </button>
-                                                    <button type="submit" class="btn btn-primary ml-1"
-                                                        data-bs-dismiss="modal">
+                                                    <button type="submit" class="btn btn-primary ml-1" >
                                                         <i class="bx bx-check d-block d-sm-none"></i>
                                                         <span class="d-none d-sm-block">Simpan</span>
                                                     </button>
@@ -241,7 +239,7 @@
     }).then((result) => {
         if (result.isConfirmed) {
             // Redirect ke route untuk menghapus data dengan ID yang telah ditentukan
-            window.location.href = "/guru/destroy/" + id;
+            window.location.href = "/manageGuru/destroy/" + id;
         }
     });
 }

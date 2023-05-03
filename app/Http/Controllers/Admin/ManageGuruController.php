@@ -16,9 +16,9 @@ class ManageGuruController extends Controller
     {
 
         $guru = User::query()
-        ->join('guru', 'guru.email', 'users.email')
-        ->where('role_id', 2)
-        ->get();
+            ->join('guru', 'guru.email', 'users.email')
+            ->where('role_id', 2)
+            ->get();
         // dd($guru);
         return view('admin.guru.index', compact('guru'));
     }
@@ -27,10 +27,10 @@ class ManageGuruController extends Controller
     {
 
         $guru = User::query()
-        ->join('guru', 'guru.email', 'users.email')
-        ->where('role_id', 2)
-        ->where('id', $id)
-        ->get();
+            ->join('guru', 'guru.email', 'users.email')
+            ->where('role_id', 2)
+            ->where('id', $id)
+            ->get();
         return view('admin.guru.index', compact('guru'));
     }
 
@@ -85,8 +85,81 @@ class ManageGuruController extends Controller
             DB::commit();
             return redirect()->route('manageGuru.index')->with('success', 'Data Guru berhasil ditambahkan.');
         } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data guru.');
+            $errorMessage = $e->getMessage();
+            if (strpos($errorMessage, 'users_email_unique') !== false) {
+                $errorMessage = 'Alamat email telah digunakan. Silakan gunakan alamat email lain.';
+            } else {
+                $errorMessage = 'Terjadi kesalahan saat menyimpan data guru.';
+            }
+            return redirect()->back()->with('error', $errorMessage);
         }
     }
+
+    public function update(Request $request, $id)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'nama' => 'required|max:255',
+                'email' => 'required',
+                'no_hp' => 'required',
+                'gender' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator);
+            }
+
+            $data = User::where('id', $id)->first();
+
+            if ($request->hasFile('gambar')) {
+
+                if (file_exists(public_path('assets/img' . $data->gambar))) {
+                    unlink(public_path('assets/img' . $data->gambar));
+                }
+
+                $gambar  = time() . 'guru' . '.' . $request->gambar->extension();
+                $path       = $request->file('gambar')->move('assets/img', $gambar);
+
+                $data->gambar = $gambar;
+            }
+
+            $data->name = $request->nama;
+            $data->email = $request->email;
+            $data->save();
+
+            if ($data->save()) {
+
+                $guru = Guru::where('email', $data->email)->first();
+                $guru->email =  $data->email;
+                $guru->jenis_kelamin =   $request->gender;
+                $guru->no_hp =   $request->no_hp;
+                $guru->alamat = $request->alamat;
+                $guru->save();
+            }
+
+            DB::commit();
+            return redirect()->route('manageGuru.index')->with('success', 'Data Guru berhasil perbarui.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data guru.'.$e->getMessage());
+        }
+    }
+
+    public function destroy($id)
+{
+    $data = User::where('id', $id)->first();
+
+    if (!$data) {
+        return redirect()->back()->with('error', 'Guru tidak ditemukan.');
+    }
+
+    $guru = Guru::where('email', $data->email)->first();
+    $guru->delete();
+    $data->delete();
+
+    return redirect()->route('manageGuru.index')->with('success', 'Guru berhasil dihapus.');
+}
 }

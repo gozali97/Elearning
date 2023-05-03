@@ -57,6 +57,8 @@
             </div>
         </div>
     </div>
+    <script src="{{ url('/assets/js/simplebar.min.js') }}"></script>
+    <script src="{{ url('/assets/js/chat.js') }}"></script>
     <script src="{{ url('/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ url('/assets/js/bootstrap.bundle.min.js') }}"></script>
 

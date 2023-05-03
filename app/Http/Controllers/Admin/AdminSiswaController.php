@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Imports\SiswaImport;
 use App\Models\Jurusan;
+use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -22,7 +23,10 @@ class AdminSiswaController extends Controller
                 ->join('users', 'users.email', 'siswa.email')
                 ->get();
 
-        return view('admin.siswa.index', compact('data'));
+        $kelas = Kelas::all();
+        $jurusan = Jurusan::all();
+
+        return view('admin.siswa.index', compact('data','kelas', 'jurusan'));
     }
 
     public function store(Request $request)
@@ -64,9 +68,15 @@ class AdminSiswaController extends Controller
                     $nis = 'SA001';
                 }
 
+                while (Siswa::where('nis', $nis)->exists()) {
+                    $nomorUrutan++;
+                    $nis = 'SA' . str_pad($nomorUrutan, 3, '0', STR_PAD_LEFT);
+                }
+
                 Siswa::create([
                     'nis' => $nis,
                     'email' =>  $user->email,
+                    'jenis_kelamin' =>   $request->gender,
                     'kelas_id' =>  $user->kelas,
                     'jurusan_id' =>   $request->jurusan,
                     'no_hp' =>   $request->no_hp,
@@ -77,6 +87,7 @@ class AdminSiswaController extends Controller
             DB::commit();
             return redirect()->route('admin.manageSiswa.index')->with('success', 'Data Siswa berhasil ditambahkan.');
         } catch (\Exception $e) {
+            dd($e);
             DB::rollback();
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data siswa.');
         }
@@ -107,25 +118,72 @@ class AdminSiswaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $data = Jurusan::where('id_jurusan', $id)->first();
+        try {
 
-        $data->nama_jurusan = $request->nama;
-        $data->save();
+            DB::beginTransaction();
 
-        return redirect()->route('admin.jurusan.index')->with('success', 'Jurusan berhasil diupdate.');
+            $validator = Validator::make($request->all(), [
+                'nama' => 'required|max:255',
+                'email' => 'required',
+                'no_hp' => 'required',
+                'gender' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator);
+            }
+
+            $data = User::where('id', $id)->first();
+
+            if ($request->hasFile('gambar')) {
+
+                if ($data->gambar !== null && file_exists(public_path('/assets/img/' . $data->gambar))) {
+                    unlink(public_path('/assets/img/' . $data->gambar));
+                }
+
+                $gambar  = time() . 'siswa' . '.' . $request->gambar->extension();
+                $path       = $request->file('gambar')->move('assets/img', $gambar);
+
+                $data->gambar = $gambar;
+            }
+
+            $data->name = $request->nama;
+            $data->email = $request->email;
+            $data->save();
+
+            if ($data->save()) {
+
+                $siswa = Siswa::where('email', $data->email)->first();
+                $siswa->email =  $data->email;
+                $siswa->jenis_kelamin =   $request->gender;
+                $siswa->kelas_id =   $request->kelas;
+                $siswa->jurusan_id =   $request->jurusan;
+                $siswa->no_hp =   $request->no_hp;
+                $siswa->alamat = $request->alamat;
+                $siswa->save();
+            }
+
+            DB::commit();
+            return redirect()->route('admin.manageSiswa.index')->with('success', 'Data Siswa berhasil perbarui.');
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollback();
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data siswa.');
+        }
     }
 
     public function destroy($id)
     {
-        $data = Jurusan::where('id_jurusan', $id)->first();
+        $data = User::where('id', $id)->first();
 
-        // dd($data);
         if (!$data) {
-            return redirect()->back()->with('error', 'Kategori tidak ditemukan.');
+            return redirect()->back()->with('error', 'Siswa tidak ditemukan.');
         }
 
+        $siswa = Siswa::where('email', $data->email)->first();
+        $siswa->delete();
         $data->delete();
 
-        return redirect()->route('admin.jurusan.index')->with('success', 'Jurusan berhasil dihapus.');
+        return redirect()->route('admin.manageSiswa.index')->with('success', 'Siswa berhasil dihapus.');
     }
 }

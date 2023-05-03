@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AdminSiswaController;
 use App\Http\Controllers\Admin\ManageGuruController;
 use App\Http\Controllers\AdminKelasController;
 use App\Http\Controllers\Guru\GuruController;
+use App\Http\Controllers\Guru\GuruDiskusiController;
 use App\Http\Controllers\Guru\GuruMataPelajaranController;
 use App\Http\Controllers\Siswa\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/manageGuru', 'index')->name('manageGuru.index');
         Route::post('/manageGuru/store', 'store')->name('manageGuru.store');
         Route::post('/manageGuru/update/{id}', 'update')->name('manageGuru.update');
+        Route::get('/manageGuru/destroy/{id}', 'destroy')->name('manageGuru.destroy');
     });
 
     Route::controller(AdminAdminKelasController::class)->group(function () {
@@ -108,6 +110,11 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
         Route::get('/listajar/view-tugas/{id}', 'viewTugas')->name('guru.listajar.viewTugas');
         Route::get('/listajar/listsiswa/{id}', 'viewSiswa')->name('guru.listajar.listsiswa');
 
+    });
+
+    Route::controller(GuruDiskusiController::class)->group(function () {
+        Route::get('/diskusi/{id}', 'index')->name('guru.diskusi.index');
+        Route::post('/diskusi/sendMessage', 'sendMessage')->name('guru.diskusi.sendMessage');
     });
 });
 

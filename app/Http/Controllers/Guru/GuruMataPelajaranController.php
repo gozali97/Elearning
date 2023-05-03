@@ -77,14 +77,14 @@ class GuruMataPelajaranController extends Controller
 
             return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Data Materi Pelajaran berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data materi.', $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data materi.'. $e->getMessage());
         }
     }
 
     public function update(Request $request, $id)
     {
         try {
-            $data = Materi::where('kode_mapel', $id)->first();
+            $data = Materi::where('id_materi', $id)->first();
 
             if ($request->hasFile('file')) {
 
@@ -104,7 +104,7 @@ class GuruMataPelajaranController extends Controller
 
             return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.', $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.'. $e->getMessage());
         }
     }
 
@@ -156,7 +156,7 @@ class GuruMataPelajaranController extends Controller
 
             return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Tugas berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data tugas.', $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data tugas.'. $e->getMessage());
         }
     }
 
@@ -183,7 +183,7 @@ class GuruMataPelajaranController extends Controller
 
             return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.', $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.'. $e->getMessage());
         }
     }
 
