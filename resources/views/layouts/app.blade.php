@@ -10,8 +10,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url('/assets/css/bootstrap.css') }}">
 
-    <link rel="stylesheet" href="{{ url('/assets/vendors/iconly/bold.css') }}">
+    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+        rel="stylesheet">
 
+    <link rel="stylesheet" href="{{ url('/assets/vendors/iconly/bold.css') }}">
+    <link rel="stylesheet" href="{{ url('/assets/vendors/choices.js/choices.min.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/vendors/perfect-scrollbar/perfect-scrollbar.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/vendors/bootstrap-icons/bootstrap-icons.css') }}">
     <link rel="stylesheet" href="{{ url('/assets/css/app.css') }}">
@@ -34,7 +38,7 @@
                 <div class="float-end">
                     <div class="d-flex align-items-center">
                         <div class="avatar avatar-xl">
-                            <img src="{{ url('/assets/img/'. Auth::user()->gambar) }}" alt="Face 1">
+                            <img src="{{ url('/assets/img/' . Auth::user()->gambar) }}" alt="Face 1">
                         </div>
                         <div class="ms-3 name">
                             <h5 class="font-bold">{{ Auth::user()->name }}</h5>
@@ -61,6 +65,7 @@
     <script src="{{ url('/assets/js/chat.js') }}"></script>
     <script src="{{ url('/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ url('/assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url('/assets/vendors/choices.js/choices.min.js') }}"></script>
 
     <script src="{{ url('/assets/vendors/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ url('/assets/js/pages/dashboard.js') }}"></script>
@@ -74,6 +79,14 @@
         let dataTable = new simpleDatatables.DataTable(table1);
     </script>
     <script src="{{ url('/assets/js/main.js') }}"></script>
+
+    <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js">
+    </script>
+    <script src="https://unpkg.com/filepond-plugin-image-crop/dist/filepond-plugin-image-crop.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-filter/dist/filepond-plugin-image-filter.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.js"></script>
+    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 </body>
 
 </html>

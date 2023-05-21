@@ -91,7 +91,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/manageSiswa/update/{id}', 'update')->name('admin.manageSiswa.update');
         Route::get('/manageSiswa/destroy/{id}', 'destroy')->name('admin.manageSiswa.destroy');
     });
-
 });
 
 
@@ -110,6 +109,8 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
         Route::get('/listajar/view-tugas/{id}', 'viewTugas')->name('guru.listajar.viewTugas');
         Route::get('/listajar/listsiswa/{id}', 'viewSiswa')->name('guru.listajar.listsiswa');
 
+        //Nilai tugas siswa
+        Route::post('/listajar/view-tugas/mark', 'nilaiTugasSiswa')->name('guru.listajar.viewTugas.mark');
     });
 
     Route::controller(GuruDiskusiController::class)->group(function () {

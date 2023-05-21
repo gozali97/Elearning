@@ -9,19 +9,22 @@ use Illuminate\Http\Request;
 class ProfileController extends Controller
 {
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
 
         $email = $request->input('email');
 
         $data = User::query()
-        ->join('siswas', 'siswas.email_siswa', 'users.email')
-        ->where('users.email', $email)
-        ->first();
+            ->join('siswa', 'siswa.email', 'users.email')
+            ->join('kelas', 'kelas.id_kelas', 'siswa.kelas_id')
+            ->join('jurusans', 'jurusans.id_jurusan', 'siswa.jurusan_id')
+            ->where('users.email', $email)
+            ->first();
 
 
-        if($data){
+        if ($data) {
             return $this->success($data);
-        }else{
+        } else {
             return $this->error('Data tidak ditemukan');
         }
     }

@@ -55,29 +55,38 @@ class GuruMataPelajaranController extends Controller
     public function store(Request $request)
     {
         try {
+
             $validator = Validator::make($request->all(), [
                 'nama' => 'required|max:255',
                 'deskripsi' => 'required',
-                'file' => 'required|mimes:docx,ppt,jpg,pdf|max:10240',
+                'file' => 'nullable|array',
+                'file.*' => 'mimes:docx,ppt,jpg,pdf|max:10240',
             ]);
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator);
             }
 
-            $file  = $request->nama . '.' . $request->file->extension();
-            $path       = $request->file('file')->move('assets/dokumen', $file);
+            $files = [];
+            if ($request->hasFile('file')) {
+                foreach ($request->file('file') as $uploadedFile) {
+                    $filename = $request->nama . '_' . uniqid() . '.' . $uploadedFile->extension();
+                    $path = $uploadedFile->move('assets/dokumen', $filename);
+                    $files[] = $filename;
+                }
+            }
+            dd($files);
 
             Materi::create([
                 'jadwal_id' => $request->jadwal_id,
                 'nama_materi' => $request->nama,
                 'deskripsi' => $request->deskripsi,
-                'path_file' => $file,
+                'path_file' => implode(',', $files), // Mengubah array menjadi string dipisahkan oleh koma
             ]);
 
             return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Data Materi Pelajaran berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data materi.'. $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data materi.' . $e->getMessage());
         }
     }
 
@@ -104,7 +113,7 @@ class GuruMataPelajaranController extends Controller
 
             return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.'. $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.' . $e->getMessage());
         }
     }
 
@@ -156,7 +165,7 @@ class GuruMataPelajaranController extends Controller
 
             return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Tugas berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data tugas.'. $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data tugas.' . $e->getMessage());
         }
     }
 
@@ -181,9 +190,9 @@ class GuruMataPelajaranController extends Controller
             $data->deskripsi = $request->deskripsi;
             $data->save();
 
-            return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.');
+            return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Tugas berhasil diupdate.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.'. $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data tugas.' . $e->getMessage());
         }
     }
 
@@ -197,8 +206,22 @@ class GuruMataPelajaranController extends Controller
             ->join('materi', 'materi.id_materi', 'tugas.materi_id')
             ->where('tugas.id_tugas', $id)
             ->get();
-            // dd($data);
+
         return view('guru.mapel.upload-siswa', compact('data'));
+    }
+
+    public function nilaiTugasSiswa(Request $request)
+    {
+        try {
+            $data = DetailTugas::where('id_detail_tugas', $request->id_tugas)->first();
+
+            $data->nilai = $request->nilai;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menyimpan nilai']);
+        }
     }
 
     public function viewSiswa($id)
@@ -212,7 +235,7 @@ class GuruMataPelajaranController extends Controller
             ->where('mata_pelajarans.kode_mapel', $id)
             ->get();
 
-            // dd($data);
+        // dd($data);
 
         return view('guru.mapel.viewSiswa', compact('data'));
     }

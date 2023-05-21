@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('diskusi_materi', function (Blueprint $table) {
-            $table->increments('id_diskusi');
-            $table->integer('materi_id');
-            $table->integer('sender_id');
-            $table->text('isi_pesan');
-            $table->enum('receiver_role', ['student', 'teacher']);
-            $table->boolean('is_read')->default(false);
+        Schema::create('diskusi_materi_penerima', function (Blueprint $table) {
+            $table->increments('id_diskusi_penerima');
+            $table->unsignedBigInteger('diskusi_materi_id');
+            $table->unsignedBigInteger('receiver_id');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('diskusi_materi');
+        Schema::dropIfExists('diskusi_materi_penerima');
     }
 };

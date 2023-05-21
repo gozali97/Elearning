@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,14 +28,13 @@ class LoginController extends Controller
             }
 
             if ($user->role->name === 'user') {
+                $user['siswa'] = User::query()
+                    ->select('nis')
+                    ->join('siswa', 'siswa.email', 'users.email')
+                    ->where('users.email', $user->email)
+                    ->first();
                 return $this->success($user);
             }
-
-            // return response()->json([
-            //     'data' => [],
-            //     'status' => 'success',
-            //     'message' => 'Login successful',
-            // ]);
         }
 
         return $this->error("Email atau Password anda salah");

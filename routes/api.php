@@ -33,9 +33,9 @@ Route::post('/mapel', [MataPelajaranController::class, 'index']);
 
 Route::controller(SiswaTugasController::class)->group(function () {
     Route::post('/siswa/listPelajaran', 'index')->name('siswa.lisPelajaran');
+    Route::post('/siswa/viewMateri', 'viewMateri')->name('siswa.viewMateri');
+
     Route::post('/siswa/viewTugas', 'viewTugas')->name('siswa.viewTugas');
     Route::post('/siswa/uploadTugas', 'store')->name('siswa.uploadTugas');
     Route::post('/siswa/updateTugas', 'update')->name('siswa.updateTugas');
 });
-
-
