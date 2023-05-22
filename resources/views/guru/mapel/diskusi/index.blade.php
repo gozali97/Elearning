@@ -211,4 +211,46 @@
         </div>
     </div>
     <script src="{{ url('/assets/js/tippy-bundle.umd.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Mengirim pesan saat form disubmit
+            $('#chatinput-form').submit(function(event) {
+                event.preventDefault();
+
+                // Mengambil data pesan dari input
+                var message = $('#message').val();
+
+                // Mengirim permintaan AJAX
+                $.ajax({
+                    url: "{{ route('guru.diskusi.sendMessage') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        materi_id: "{{ $materi->id }}",
+                        sender_id: "{{ Auth::user()->id }}",
+                        isi_pesan: message
+                    },
+                    success: function(response) {
+                        // Menampilkan SweetAlert sukses
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Pesan berhasil dikirim!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        // Mengosongkan input pesan
+                        $('#message').val('');
+                    },
+                    error: function(xhr, status, error) {
+                        // Tangkap pesan error dari response
+                        var errorMessage = xhr.responseJSON.message;
+
+                        // Tampilkan pesan error menggunakan sweetalert
+                        Swal.fire('Error', errorMessage, 'error');
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
