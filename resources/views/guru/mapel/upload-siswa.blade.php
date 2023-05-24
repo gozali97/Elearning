@@ -19,7 +19,7 @@
                     </div>
                     <div class="card-body">
                         <div class="container p-3">
-                            <table class="table">
+                            <table class="table table-striped" id="table1">
                                 <thead>
                                     <tr>
                                         <th>#</th>

@@ -9,6 +9,7 @@ use App\Models\Materi;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GuruDiskusiController extends Controller
 {
@@ -21,54 +22,76 @@ class GuruDiskusiController extends Controller
             ->where('id_materi', $id)
             ->first();
 
-
         return view('guru.mapel.diskusi.index', compact('materi'));
     }
 
-    public function store(Request $request)
+    public function send(Request $request)
     {
         try {
 
+            DB::beginTransaction();
             $validatedData = $request->validate([
                 'materi_id' => 'required',
                 'sender_id' => 'required',
                 'isi_pesan' => 'required',
+                'kelas_id' => 'required',
             ]);
 
             $materiId = $validatedData['materi_id'];
+            $kelasiId = $validatedData['kelas_id'];
             $senderId = $validatedData['sender_id'];
             $isiPesan = $validatedData['isi_pesan'];
 
-            // Simpan pesan ke tabel diskusi_materi
             $pesan = DiskusiMateri::create([
                 'materi_id' => $materiId,
                 'sender_id' => $senderId,
                 'isi_pesan' => $isiPesan,
-                'receiver_role' => 'student', // Pesan ditujukan kepada murid
+                'receiver_role' => '3',
             ]);
 
-            // Dapatkan ID semua murid yang terkait dengan materi
             $receiverIds = User::query()
                 ->join('siswa', 'siswa.email', 'users.email')
                 ->join('kelas', 'kelas.id_kelas', 'siswa.kelas_id')
                 ->join('jadwal_pelajaran', 'jadwal_pelajaran.kelas_id', 'kelas.id_kelas')
                 ->join('materi', 'materi.jadwal_id', 'jadwal_pelajaran.kode_jadwal')
                 ->where('materi.id_materi', $materiId)
+                ->where('siswa.kelas_id', $kelasiId)
+                ->where('role_id', 3)
                 ->pluck('users.id');
 
-            dd($receiverIds);
-            // Simpan entri penerima untuk setiap murid
             foreach ($receiverIds as $receiverId) {
                 DiskusiMateriPenerima::create([
                     'diskusi_materi_id' => $pesan->materi_id,
                     'receiver_id' => $receiverId,
                 ]);
             }
-
+            DB::commit();
             return redirect()->back()->with('success', 'Pesan berhasil dikirim ke seluruh murid.');
         } catch (\Exception $e) {
-
+            DB::rollback();
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data tugas.' . $e->getMessage());
+        }
+    }
+
+    public function getAllMessages(Request $request, $materi_id)
+    {
+        try {
+            $userId = Auth::user()->id;
+            $receivedMessages = DiskusiMateri::query()
+                // ->join('diskusi_materi_penerima', 'diskusi_materi_penerima.receiver_id', 'diskusi_materi.materi_id')
+                ->where('materi_id', $materi_id)
+                ->where('receiver_role', 2)
+                // ->where('diskusi_materi_penerima.receiver_id', $receiver_id)
+                ->get();
+
+            $sentMessages = DiskusiMateri::where('sender_id', $userId)->get();
+
+            return response()->json([
+                'sentMessages' => $sentMessages,
+                'receivedMessages' => $receivedMessages
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Terjadi kesalahan saat mengambil pesan.'], 500);
         }
     }
 }

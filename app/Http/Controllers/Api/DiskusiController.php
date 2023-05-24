@@ -23,7 +23,9 @@ class DiskusiController extends Controller
 
         // Periksa apakah siswa merupakan penerima pesan
         $receiverId = Auth::id();
-        $pesan = DiskusiMateriPenerima::where('diskusi_materi_id', $pesanId)
+        $pesan = DiskusiMateriPenerima::query()
+            ->lefJoin('diskusi_materi', 'diskusi_materi.materi_id', 'diskusi_materi_penerima.diskusi_materi_id')
+            ->where('diskusi_materi_id', $pesanId)
             ->where('receiver_id', $receiverId)
             ->first();
 
@@ -36,7 +38,7 @@ class DiskusiController extends Controller
             'materi_id' => $pesan->materi_id,
             'sender_id' => $receiverId,
             'isi_pesan' => $isiPesan,
-            'receiver_role' => 'teacher', // Balasan pesan ditujukan kepada guru
+            'receiver_role' => '2',
         ]);
 
         if ($balasan) {

@@ -115,7 +115,8 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
 
     Route::controller(GuruDiskusiController::class)->group(function () {
         Route::get('/diskusi/{id}', 'index')->name('guru.diskusi.index');
-        Route::post('/diskusi/sendMessage', 'store')->name('guru.diskusi.sendMessage');
+        Route::post('/diskusi/sendMessage', 'send')->name('guru.diskusi.sendMessage');
+        Route::get('/diskusi/getMessage/{materi_id}', 'getAllMessages')->name('guru.diskusi.getMessage');
     });
 });
 

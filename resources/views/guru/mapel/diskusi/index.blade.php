@@ -106,53 +106,13 @@
                                             <div class="simplebar-content-wrapper" tabindex="0" role="region"
                                                 aria-label="scrollable content"
                                                 style="height: 100%; overflow: hidden scroll;">
-                                                <div class="simplebar-content" style="padding: 20px;">
+                                                <div id="chat" class="simplebar-content" style="padding: 20px;">
                                                     <!-- media -->
-                                                    <div class="d-flex w-lg-40 mb-4">
-                                                        <img src="{{ url('/assets/img/' . $materi->gambar) }}"
-                                                            alt="Image" class="rounded-circle avatar-md user-avatar">
-                                                        <!-- media body -->
-                                                        <div class=" ms-3">
-                                                            <small><span class="username">{{ $materi->name }}</span> ,
-                                                                09:35</small>
-                                                            <div class="d-flex">
-                                                                <div class="card mt-2 rounded-top-md-left-0 border">
-                                                                    <div class="card-body p-3">
-                                                                        <p class="mb-0 text-dark">
-                                                                            Hello, Setup the github repo for bootstrap admin
-                                                                            dashboard.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <div id="penerima">
+
                                                     </div>
-                                                    <div class="d-flex justify-content-end mb-4">
-                                                        <!-- media -->
-                                                        <div class="d-flex w-lg-40">
-                                                            <!-- media body -->
-                                                            <div class=" me-3 text-end">
-                                                                <small> 09:39</small>
-                                                                <div class="d-flex">
-                                                                    <!-- card -->
-                                                                    <div
-                                                                        class="card mt-2 rounded-top-md-end-0 bg-primary text-white ">
-                                                                        <!-- card body -->
-                                                                        <div class="card-body text-start p-3">
-                                                                            <p class="mb-0">
-                                                                                Yes, Currently working on the today evening
-                                                                                i
-                                                                                will
-                                                                                up the admin dashboard template.
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- img -->
-                                                            <img src="../assets/images/avatar/avatar-11.jpg"
-                                                                alt="Image" class="rounded-circle avatar-md">
-                                                        </div>
+                                                    <div id="pengirim">
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -213,44 +173,127 @@
     <script src="{{ url('/assets/js/tippy-bundle.umd.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            // Mengirim pesan saat form disubmit
             $('#chatinput-form').submit(function(event) {
                 event.preventDefault();
 
-                // Mengambil data pesan dari input
                 var message = $('#message').val();
 
-                // Mengirim permintaan AJAX
                 $.ajax({
                     url: "{{ route('guru.diskusi.sendMessage') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
-                        materi_id: "{{ $materi->id }}",
+                        materi_id: "{{ $materi->id_materi }}",
                         sender_id: "{{ Auth::user()->id }}",
+                        kelas_id: "{{ $materi->kelas_id }}",
                         isi_pesan: message
                     },
                     success: function(response) {
-                        // Menampilkan SweetAlert sukses
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Pesan berhasil dikirim!',
-                            showConfirmButton: false,
-                            timer: 1500
-                        });
+                        Toastify({
+                            text: "Pesan berhasil dikirim",
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "center",
+                            stopOnFocus: true,
+                            style: {
+                                background: "linear-gradient(to right, #00b09b, #96c93d)",
+                            },
+                            className: 'rounded-lg',
+                            onClick: function() {}
+                        }).showToast();
 
-                        // Mengosongkan input pesan
                         $('#message').val('');
                     },
                     error: function(xhr, status, error) {
-                        // Tangkap pesan error dari response
-                        var errorMessage = xhr.responseJSON.message;
+                        var errorMessage = xhr.responseText;
 
-                        // Tampilkan pesan error menggunakan sweetalert
                         Swal.fire('Error', errorMessage, 'error');
                     }
                 });
             });
+
+            setInterval(function() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('guru.diskusi.getMessage', ['materi_id' => $materi->id_materi]) }}",
+                    success: function(response) {
+                        // console.log(response);
+                        var sentMessages = response.sentMessages;
+                        var receivedMessages = response.receivedMessages;
+                        var messages = [];
+                        var messageHtml = '';
+
+                        messages = messages.concat(sentMessages, receivedMessages);
+
+                        messages.sort(function(a, b) {
+                            return new Date(a.created_at) - new Date(b.created_at);
+                        });
+
+                        $.each(messages, function(index, message) {
+                            if (message.sender_id == {{ Auth::user()->id }}) {
+                                messageHtml +=
+                                    '<div class="d-flex justify-content-end mb-4">';
+                                messageHtml += '<div class="d-flex">';
+                                messageHtml += '<div class="me-3 text-end">';
+                                messageHtml +=
+                                    '<small><span class="username">{{ $materi->name }}</span>, ' +
+                                    formatTime(message.created_at) + '</small>';
+                                messageHtml += '<div class="d-flex">';
+                                messageHtml +=
+                                    '<div class="card mt-2 rounded-top-md-end-0 bg-primary text-white">';
+                                messageHtml += '<div class="card-body text-start p-3">';
+                                messageHtml += '<p class="mb-0">' + message.isi_pesan +
+                                    '</p>';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                                messageHtml +=
+                                    '<img src="{{ url('/assets/img/' . $materi->gambar) }}" alt="Image" class="rounded-circle avatar-md">';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                            } else {
+                                messageHtml += '<div class="d-flex w-lg-40 mb-4">';
+                                messageHtml +=
+                                    '<img src="{{ url('/assets/img/' . $materi->gambar) }}" alt="Image" class="rounded-circle avatar-md user-avatar">';
+                                messageHtml += '<div class="ms-3">';
+                                messageHtml +=
+                                    '<small>' +
+                                    formatTime(message.created_at) + '</small>';
+                                messageHtml += '<div class="d-flex">';
+                                messageHtml +=
+                                    '<div class="card mt-2 rounded-top-md-left-0 border">';
+                                messageHtml += '<div class="card-body p-3">';
+                                messageHtml += '<p class="mb-0 text-dark">' + message
+                                    .isi_pesan + '</p>';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                                messageHtml += '</div>';
+                            }
+                        });
+
+                        $('#chat').html(messageHtml);
+                    },
+                    error: function(response) {
+                        console.log(response);
+                    }
+                });
+            }, 1000);
+
+            function formatTime(dateTime) {
+                var date = new Date(dateTime);
+                var options = {
+                    timeZone: 'Asia/Jakarta',
+                    hour12: false,
+                    hour: 'numeric',
+                    minute: 'numeric'
+                };
+                return date.toLocaleString('en-US', options);
+            }
         });
     </script>
 @endsection
