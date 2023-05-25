@@ -219,7 +219,6 @@
                     type: "GET",
                     url: "{{ route('guru.diskusi.getMessage', ['materi_id' => $materi->id_materi]) }}",
                     success: function(response) {
-                        // console.log(response);
                         var sentMessages = response.sentMessages;
                         var receivedMessages = response.receivedMessages;
                         var messages = [];

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ManageGuruController;
 use App\Http\Controllers\AdminKelasController;
 use App\Http\Controllers\Guru\GuruController;
 use App\Http\Controllers\Guru\GuruDiskusiController;
+use App\Http\Controllers\Guru\GuruLaporanController;
 use App\Http\Controllers\Guru\GuruMataPelajaranController;
 use App\Http\Controllers\Siswa\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -117,6 +118,11 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
         Route::get('/diskusi/{id}', 'index')->name('guru.diskusi.index');
         Route::post('/diskusi/sendMessage', 'send')->name('guru.diskusi.sendMessage');
         Route::get('/diskusi/getMessage/{materi_id}', 'getAllMessages')->name('guru.diskusi.getMessage');
+    });
+
+    Route::controller(GuruLaporanController::class)->group(function () {
+        Route::get('/laporan', 'index')->name('guru.laporan.index');
+        Route::post('/laporan/print', 'print')->name('guru.laporan.print');
     });
 });
 

@@ -75,7 +75,7 @@ class GuruMataPelajaranController extends Controller
                     $files[] = $filename;
                 }
             }
-            dd($files);
+
 
             Materi::create([
                 'jadwal_id' => $request->jadwal_id,

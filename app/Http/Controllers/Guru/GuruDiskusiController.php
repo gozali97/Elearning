@@ -73,18 +73,19 @@ class GuruDiskusiController extends Controller
         }
     }
 
-    public function getAllMessages(Request $request, $materi_id)
+    public function getAllMessages($materi_id)
     {
         try {
             $userId = Auth::user()->id;
+
             $receivedMessages = DiskusiMateri::query()
-                // ->join('diskusi_materi_penerima', 'diskusi_materi_penerima.receiver_id', 'diskusi_materi.materi_id')
                 ->where('materi_id', $materi_id)
                 ->where('receiver_role', 2)
-                // ->where('diskusi_materi_penerima.receiver_id', $receiver_id)
                 ->get();
-
-            $sentMessages = DiskusiMateri::where('sender_id', $userId)->get();
+            $sentMessages = DiskusiMateri::query()
+                ->where('sender_id', $userId)
+                ->where('materi_id', $materi_id)
+                ->get();
 
             return response()->json([
                 'sentMessages' => $sentMessages,
