@@ -199,14 +199,24 @@ class GuruMataPelajaranController extends Controller
     public function viewTugas($id)
     {
 
-        $data = DetailTugas::query()
-            ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
-            ->join('siswa', 'siswa.nis', 'detail_tugas.siswa_id')
+        $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
+            ->get();
+
+        $tugas = DetailTugas::query()
+            ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
             ->join('materi', 'materi.id_materi', 'tugas.materi_id')
+            ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
             ->where('tugas.id_tugas', $id)
             ->get();
 
+        $data = $data->map(function ($item) use ($tugas) {
+            $item->tugas = collect($tugas)->filter(function ($tugasItem) use ($item) {
+                return $tugasItem['siswa_id'] == $item->nis;
+            })->values();
+            return $item;
+        });
+        // dd($data);
         return view('guru.mapel.upload-siswa', compact('data'));
     }
 

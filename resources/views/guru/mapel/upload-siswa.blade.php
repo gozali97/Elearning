@@ -38,68 +38,82 @@
                                     @foreach ($data as $d)
                                         <tr>
                                             <td>{{ $no++ }}</td>
-                                            <td>{{ $d->name }}</td>
-                                            <td>{{ $d->nama_tugas }}</td>
-                                            <td>{{ $d->nama_materi }}</td>
-                                            <td><button data-bs-toggle="modal"
-                                                    data-bs-target="#full-scrn{{ $d->id_detail_tugas }}"
-                                                    class="btn btn-light d-inline-flex align-items-center"><i
-                                                        class="bi bi-file-word-fill me-1"></i>Lihat Tugas</button></td>
-                                            <td>
-                                                <input type="hidden" id="id_tugas_{{ $d->id_detail_tugas }}"
-                                                    value="{{ $d->id_detail_tugas }}">
-                                                <input class="form-control" type="number" value="{{ $d->nilai }}"
-                                                    id="nilai_{{ $d->id_detail_tugas }}">
-                                            </td>
-                                            <td>
-                                                <button class="btn me-md-2 d-inline-flex btn-submit-nilai"
-                                                    data-id="{{ $d->id_detail_tugas }}"><i
-                                                        class="bi text-success bi-check-circle-fill me-1 fs-5 d-inline-flex"></i></button>
-                                            </td>
+                                            <td class="{{ $d->tugas->isEmpty() ? 'text-danger' : '' }}">
+                                                {{ $d->name }}</td>
+                                            @if ($d->tugas->isEmpty())
+                                                <td colspan="5" class="text-danger text-center">Belum mengumpulkan tugas
+                                                </td>
+                                            @else
+                                                @foreach ($d->tugas as $tugas)
+                                                    <td>{{ $tugas->nama_tugas }}</td>
+                                                    <td>{{ $tugas->nama_materi }}</td>
+                                                    <td><button data-bs-toggle="modal"
+                                                            data-bs-target="#full-scrn{{ $tugas->id_detail_tugas }}"
+                                                            class="btn btn-light d-inline-flex align-items-center"><i
+                                                                class="bi bi-file-word-fill me-1"></i>Lihat Tugas</button>
+                                                    </td>
+                                                    <td>
+                                                        <input type="hidden" id="id_tugas_{{ $tugas->id_detail_tugas }}"
+                                                            value="{{ $tugas->id_detail_tugas }}">
+                                                        <input class="form-control" type="number"
+                                                            value="{{ $tugas->nilai }}"
+                                                            id="nilai_{{ $tugas->id_detail_tugas }}">
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn me-md-2 d-inline-flex btn-submit-nilai"
+                                                            data-id="{{ $tugas->id_detail_tugas }}"><i
+                                                                class="bi text-success bi-check-circle-fill me-1 fs-5 d-inline-flex"></i></button>
+                                                    </td>
+
+                                                    <!-- Modal view Tugas -->
+                                                    <div class="modal fade text-left w-100"
+                                                        id="full-scrn{{ $tugas->id_detail_tugas }}" tabindex="-1"
+                                                        aria-labelledby="myModalLabel20{{ $tugas->id_detail_tugas }}"
+                                                        aria-hidden="true" style="display: none;">
+                                                        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+                                                            role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close"
+                                                                        data-bs-dismiss="modal" aria-label="Close">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="24" height="24"
+                                                                            viewBox="0 0 24 24" fill="none"
+                                                                            stroke="currentColor" stroke-width="2"
+                                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                                            class="feather feather-x">
+                                                                            <line x1="18" y1="6"
+                                                                                x2="6" y2="18">
+                                                                            </line>
+                                                                            <line x1="6" y1="6"
+                                                                                x2="18" y2="18">
+                                                                            </line>
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <embed type="application/pdf"
+                                                                        src="{{ url('/assets/tugas-siswa/', $tugas->file) }}"
+                                                                        width="1090" height="800"></embed>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-light-secondary"
+                                                                        data-bs-dismiss="modal">
+                                                                        <i class="bx bx-x d-block d-sm-none"></i>
+                                                                        <span class="d-none d-sm-block">Close</span>
+                                                                    </button>
+                                                                    <button type="submit" class="btn btn-primary ml-1">
+                                                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                                                        <span class="d-none d-sm-block">Simpan</span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+
                                         </tr>
-                                        <!-- Modal view Tugas -->
-                                        <div class="modal fade text-left w-100" id="full-scrn{{ $d->id_detail_tugas }}"
-                                            tabindex="-1" aria-labelledby="myModalLabel20{{ $d->id_detail_tugas }}"
-                                            aria-hidden="true" style="display: none;">
-                                            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
-                                                role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-bs-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                height="24" viewBox="0 0 24 24" fill="none"
-                                                                stroke="currentColor" stroke-width="2"
-                                                                stroke-linecap="round" stroke-linejoin="round"
-                                                                class="feather feather-x">
-                                                                <line x1="18" y1="6" x2="6"
-                                                                    y2="18">
-                                                                </line>
-                                                                <line x1="6" y1="6" x2="18"
-                                                                    y2="18">
-                                                                </line>
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <embed type="application/pdf"
-                                                            src="{{ url('/assets/tugas-siswa/', $d->file) }}"
-                                                            width="1090" height="800"></embed>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-light-secondary"
-                                                            data-bs-dismiss="modal">
-                                                            <i class="bx bx-x d-block d-sm-none"></i>
-                                                            <span class="d-none d-sm-block">Close</span>
-                                                        </button>
-                                                        <button type="submit" class="btn btn-primary ml-1">
-                                                            <i class="bx bx-check d-block d-sm-none"></i>
-                                                            <span class="d-none d-sm-block">Simpan</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     @endforeach
                                 </tbody>
                             </table>
