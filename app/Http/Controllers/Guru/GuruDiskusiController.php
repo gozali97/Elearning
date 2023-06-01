@@ -30,6 +30,7 @@ class GuruDiskusiController extends Controller
         try {
 
             DB::beginTransaction();
+            // dd($request->all());
             $validatedData = $request->validate([
                 'materi_id' => 'required',
                 'sender_id' => 'required',
@@ -48,7 +49,6 @@ class GuruDiskusiController extends Controller
                 'isi_pesan' => $isiPesan,
                 'receiver_role' => '3',
             ]);
-
             $receiverIds = User::query()
                 ->join('siswa', 'siswa.email', 'users.email')
                 ->join('kelas', 'kelas.id_kelas', 'siswa.kelas_id')

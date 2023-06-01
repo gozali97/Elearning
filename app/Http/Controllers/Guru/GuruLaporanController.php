@@ -3,35 +3,89 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Models\DetailTugas;
+use App\Models\Guru;
+use App\Models\JadwalPelajaran;
+use App\Models\MataPelajaran;
 use App\Models\Siswa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class GuruLaporanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $filter = $request->mapel;
+        $selectedMapel = $filter;
+
+        $email = Auth::user()->email;
+        $guru = Guru::where('email', $email)->first();
+        
 
         $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
             ->get();
 
-        return view('guru.laporan.index', compact('data'));
+        $detail = DetailTugas::query()
+                ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
+                ->join('materi', 'materi.id_materi', 'tugas.materi_id')
+                ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
+                ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
+                ->where('jadwal_pelajaran.guru_id', $guru->nip);
+
+         if (!empty($filter)) {
+                $detail = $detail->where('jadwal_pelajaran.mapel_id', $filter);
+            }
+        
+        $tugas = $detail->get();
+
+        $data = $data->map(function ($item) use ($tugas) {
+            $item->tugas = collect($tugas)->filter(function ($tugasItem) use ($item) {
+                return $tugasItem['siswa_id'] == $item->nis;
+            })->values();
+            return $item;
+        });
+
+    $jadwal= JadwalPelajaran::query()
+            ->join('mata_pelajarans', 'mata_pelajarans.kode_mapel', 'jadwal_pelajaran.mapel_id')
+            ->get();
+        return view('guru.laporan.index', compact('data', 'jadwal', 'selectedMapel'));
     }
 
     public function Print(Request $request)
     {
-        $start = Carbon::parse($request->stat_date)->format('Y-m-d');
-        $end = Carbon::parse($request->end_date)->format('Y-m-d');
+        $filter = $request->mapel;
+        $email = Auth::user()->email;
+        $guru = Guru::where('email', $email)->first();
 
         $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
-            ->whereBetween('siswa.created_at', [$start, $end])
             ->get();
 
-        $pdf = Pdf::loadView('guru.laporan.laporan-pdf', compact('data', 'start', 'end'));
+        $detail = DetailTugas::query()
+                ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
+                ->join('materi', 'materi.id_materi', 'tugas.materi_id')
+                ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
+                ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
+                ->where('jadwal_pelajaran.guru_id', $guru->nip);
+
+         if (!empty($filter)) {
+                $detail = $detail->where('jadwal_pelajaran.mapel_id', $filter);
+            }
+        
+        $tugas = $detail->get();
+
+        $data = $data->map(function ($item) use ($tugas) {
+            $item->tugas = collect($tugas)->filter(function ($tugasItem) use ($item) {
+                return $tugasItem['siswa_id'] == $item->nis;
+            })->values();
+            return $item;
+        });
+        $mapel = MataPelajaran::where('kode_mapel', $filter)->first();
+        $pdf = Pdf::loadView('guru.laporan.laporan-pdf', compact('data', 'mapel'));
 
         return Response::make($pdf->output(), 200, [
             'Content-Type' => 'application/pdf',

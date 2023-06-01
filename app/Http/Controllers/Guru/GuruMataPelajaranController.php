@@ -216,7 +216,6 @@ class GuruMataPelajaranController extends Controller
             })->values();
             return $item;
         });
-        // dd($data);
         return view('guru.mapel.upload-siswa', compact('data'));
     }
 

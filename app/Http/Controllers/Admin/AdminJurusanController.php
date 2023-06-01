@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Jurusan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdminJurusanController extends Controller
 {
@@ -17,10 +18,16 @@ class AdminJurusanController extends Controller
     public function store(Request $request)
     {
         try {
-            // dd($request->all());
-            $request->validate([
-                'nama' => 'required|max:255',
+            $validasi = Validator::make($request->all(), [
+                'nama' => 'required',
+            ], [
+                'nama.required' => 'Kolom nama jurusan harus diisi.',
+
             ]);
+
+            if ($validasi->fails()) {
+                return back()->withErrors($validasi)->withInput();
+            }
 
             Jurusan::create([
                 'nama_jurusan' => $request->nama,
@@ -34,6 +41,16 @@ class AdminJurusanController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validasi = Validator::make($request->all(), [
+            'nama' => 'required',
+        ], [
+            'nama.required' => 'Kolom nama jurusan harus diisi.',
+
+        ]);
+
+        if ($validasi->fails()) {
+            return back()->withErrors($validasi)->withInput();
+        }
         $data = Jurusan::where('id_jurusan', $id)->first();
 
         $data->nama_jurusan = $request->nama;

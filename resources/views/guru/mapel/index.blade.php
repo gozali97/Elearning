@@ -20,7 +20,7 @@
             <div class="row">
               <div class="col-md-8 col-sm-8">
                 <h4 class="card-title">{{ $d->nama_kelas }}</h4>
-                <p class="card-text">
+                <p class="card-text text-truncate">
                   {{$d->deskripsi}}
                 </p>
                 <p class="card-text">

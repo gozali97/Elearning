@@ -72,7 +72,7 @@
                                                     <label for="password">Jurusan: </label>
                                                     <fieldset class="form-group mt-1">
                                                         <select name="jurusan" class="form-select" id="basicSelect">
-                                                          <option>pilih</option>
+                                                          <option value="" >pilih</option>
                                                           @foreach ($jurusan as $j)
                                                           <option value="{{ $j->id_jurusan }}" {{ $j->id_jurusan == $d->jurusan_id ? 'selected' : '' }}>{{ $j->nama_jurusan }}</option>
                                                           @endforeach
@@ -117,7 +117,7 @@
                                             <label for="password">Jurusan: </label>
                                             <fieldset class="form-group mt-1">
                                                 <select name="jurusan" class="form-select" id="basicSelect">
-                                                  <option>pilih</option>
+                                                  <option value="" >pilih</option>
                                                   @foreach ($jurusan as $j)
                                                   <option value="{{ $j->id_jurusan }}">{{ $j->nama_jurusan }}</option>
                                                   @endforeach

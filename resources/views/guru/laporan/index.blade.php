@@ -16,26 +16,25 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-md-4">
-                                <h4 class="d-inline-flex">Daftar Siswa</h4>
-                            </div>
-                            <div class="col-md-8">
-                                <form action="{{ route('guru.laporan.print') }}" method="post">
+                                    <div class="col-md-6">
+                                        <form action="{{ route('guru.laporan.index') }}" method="GET">
                                     @csrf
                                     <div class="form-group">
                                         <div class="row">
-                                            <div class="col-md-3">
-                                                <input class="form-control" type="date" name="stat_date" value="pilih"
-                                                    id="html5-date-input">
+                                            <div class="col-md-4">Filter Data</div>
+                                            <div class="col-md-6">
+                                                <select class="form-control" name="mapel" id="">
+                                                    <option value="">Pilih Mapel</option>
+                                                    @foreach ($jadwal as $j)
+                                                     <option value="{{$j->kode_mapel}}" {{ $j->kode_mapel == $selectedMapel ? 'selected' : '' }}>
+                                                        {{$j->nama_mapel}}
+                                                    </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <div class="col-md-3">
-                                                <input class="form-control" name="end_date" placeholder="pilih"
-                                                    type="date">
-                                            </div>
-                                            <div class="col-md-3">
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="icon-copy fa fa-print" aria-hidden="true"
-                                                        style="margin-right: 5px"></i>Print
+                                            <div class="col-md-2">
+                                                <button type="submit" class="btn icon btn-primary">
+                                                    Filter
                                                 </button>
                                             </div>
                                         </div>
@@ -43,8 +42,33 @@
                                     </div>
 
                                 </form>
-                            </div>
-                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                           <form action="{{ route('guru.laporan.print') }}" method="POST">
+                                    @csrf
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-4">Cetak Laporan</div>
+                                            <div class="col-md-6">
+                                                <select class="form-control" name="mapel" id="">
+                                                    <option value="">Pilih Mapel</option>
+                                                    @foreach ($jadwal as $j)
+                                                    <option value="{{$j->kode_mapel}}">{{$j->nama_mapel}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="submit" class="btn icon btn-info">
+                                                    Cetak
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                                    </div>
+                                </div>
 
                     </div>
                     <div class="card-body">
@@ -54,10 +78,9 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Nama Siswa</th>
-                                        <th>No Handphone</th>
-                                        <th>Email</th>
-                                        <th>Alamat</th>
-                                        <th>Aksi</th>
+                                        @for ($i= 1; $i<=10 ;$i++)
+                                        <th>Tugas {{$i}}</th>
+                                        @endfor
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -68,18 +91,18 @@
                                         <tr>
                                             <td>{{ $no++ }}</td>
                                             <td>{{ $d->name }}</td>
-                                            <td>{{ $d->no_hp }}</td>
-                                            <td>{{ $d->email }}</td>
-                                            <td>{{ $d->alamat }}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-outline-warning"
-                                                    data-bs-toggle="modal" data-bs-target="#inlineForm{{ $d->id }}">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </button>
-                                                <a href="#" class="btn btn-sm btn-outline-danger"
-                                                    onclick="event.preventDefault(); confirmDelete({{ $d->id }});"><i
-                                                        class="bi bi-trash-fill"></i></a>
-                                            </td>
+                                            @php
+                                                $nomor = 1;
+                                            @endphp
+                                            @foreach ($d->tugas as $tugas)
+                                             @php
+                                                $nomor+=1
+                                            @endphp
+                                            <td>{{ $tugas->nilai }}</td>
+                                            @endforeach
+                                             @for($i=$nomor; $i<=10; $i++) 
+                                                <td>0</td>
+                                            @endfor
                                         </tr>
 
                                         <div class="modal fade text-left" id="inlineForm{{ $d->id }}" tabindex="-1"

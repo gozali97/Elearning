@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('materi_id');
             $table->integer('sender_id');
             $table->text('isi_pesan');
-            $table->enum('receiver_role', ['student', 'teacher']);
+            $table->enum('receiver_role', ['3', '2']);
             $table->boolean('is_read')->default(false);
             $table->timestamps();
         });

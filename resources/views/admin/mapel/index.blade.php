@@ -37,13 +37,15 @@
                                     <td>{{ $d->nama_mapel }}</td>
                                     <td>{{ $d->deskripsi }}</td>
                                     <td>
+                                        <div class="btn-group mb-3" role="group" aria-label="Basic example">
                                         <button type="button" class="btn btn-sm btn-outline-warning d-inline-flex"
                                             data-bs-toggle="modal" data-bs-target="#inlineForm{{ $d->kode_mapel }}">
-                                            <i class="bi bi-pencil-square mt-1"></i> Edit
+                                            <i class="bi bi-pencil-square mt-1"></i>
                                         </button>
                                         <a href="#" class="btn btn-sm btn-outline-danger d-inline-flex"
                                             onclick="event.preventDefault(); confirmDelete('{{ $d->kode_mapel }}');"><i
-                                                class="bi bi-trash-fill mt-1"></i>Hapus</a>
+                                                class="bi bi-trash-fill mt-1"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
 

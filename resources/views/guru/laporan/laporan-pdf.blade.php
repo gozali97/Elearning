@@ -33,16 +33,15 @@
 
 <body>
     <h2 style="text-align:center;">Laporan Nilai Siswa</h2>
-    <p>Tanggal: {{ \Carbon\Carbon::parse($start)->format('d-m-Y') }} -
-        {{ \Carbon\Carbon::parse($end)->format('d-m-Y') }}</p>
+        <h5 style="text-align:center;">Mata Pelajaran {{$mapel->nama_mapel}}</h5>
     <table>
         <thead>
             <tr>
                 <th>No</th>
                 <th>Nama</th>
-                <th>No Handphone</th>
-                <th>Email</th>
-                <th>Alamat</th>
+                 @for ($i= 1; $i<=10 ;$i++)
+                <th>Tugas {{$i}}</th>
+                @endfor
             </tr>
         </thead>
         <tbody>
@@ -55,9 +54,18 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $d->name }}</td>
-                        <td>{{ $d->no_hp }}</td>
-                        <td>{{ $d->email }}</td>
-                        <td>{{ $d->alamat }}</td>
+                       @php
+                            $nomor = 1;
+                        @endphp
+                        @foreach ($d->tugas as $tugas)
+                            @php
+                            $nomor+=1
+                        @endphp
+                        <td>{{ $tugas->nilai }}</td>
+                        @endforeach
+                            @for($i=$nomor; $i<=10; $i++) 
+                            <td>0</td>
+                        @endfor
                     </tr>
                 @endforeach
             @endif

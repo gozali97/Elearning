@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Jurusan;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdminKelasController extends Controller
 {
@@ -22,9 +23,18 @@ class AdminKelasController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
-                'nama' => 'required|max:255',
+            $validasi = Validator::make($request->all(), [
+                'nama' => 'required',
+                'jurusan' => 'required',
+            ], [
+                'nama.required' => 'Kolom nama kelas harus diisi.',
+                'jurusan.required' => 'Kolom jurusan harus diisi.',
+
             ]);
+
+            if ($validasi->fails()) {
+                return back()->withErrors($validasi)->withInput();
+            }
 
             Kelas::create([
                 'nama_kelas' => $request->nama,
@@ -39,6 +49,18 @@ class AdminKelasController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validasi = Validator::make($request->all(), [
+            'nama' => 'required',
+            'jurusan' => 'required',
+        ], [
+            'nama.required' => 'Kolom nama kelas harus diisi.',
+            'jurusan.required' => 'Kolom jurusan harus diisi.',
+
+        ]);
+
+        if ($validasi->fails()) {
+            return back()->withErrors($validasi)->withInput();
+        }
         $data = Kelas::where('id_kelas', $id)->first();
         $data->nama_kelas = $request->nama;
         $data->jurusan_id = $request->jurusan;
