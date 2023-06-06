@@ -118,7 +118,7 @@ class SiswaTugasController extends Controller
                 unlink(public_path('assets/tugas-siswa/' . $data->file));
             }
 
-            $pdf  = $data->siswa_id . '.' . $request->file->extension();
+            $pdf  = $request->siswa_id . '-' . time() .  '.' . $request->file->extension();
             $path       = $request->file('file')->move('assets/tugas-siswa', $pdf);
             $data->file = $pdf;
         }

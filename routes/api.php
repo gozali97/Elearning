@@ -29,10 +29,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout']);
 
-Route::post('/profil', [ProfileController::class, 'index']);
-Route::post('/kelas', [KelasController::class, 'index']);
-Route::post('/mapel', [MataPelajaranController::class, 'index']);
-
 Route::controller(SiswaTugasController::class)->group(function () {
     Route::post('/siswa/listPelajaran', 'index')->name('siswa.lisPelajaran');
     Route::post('/siswa/viewMateri', 'viewMateri')->name('siswa.viewMateri');
@@ -45,4 +41,10 @@ Route::controller(SiswaTugasController::class)->group(function () {
 Route::controller(DiskusiController::class)->group(function () {
     Route::post('/materi/diskusi', 'index')->name('materi.diskusi');
     Route::post('/materi/addDiskusi', 'store')->name('materi.addDiskusi');
+});
+
+Route::controller(ProfileController::class)->group(function () {
+    Route::post('/profil', 'index')->name('profil');
+    Route::post('/profil/updateProfile', 'updateProfile')->name('profil.updateProfile');
+    Route::post('/profil/updatePassword', 'updatePassword')->name('profil.updatePassword');
 });
