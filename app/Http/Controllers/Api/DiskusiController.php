@@ -17,7 +17,7 @@ class DiskusiController extends Controller
         $idMessage = $request->input('message_id');
 
         $data = DiskusiMateri::query()
-            ->orderBy('diskusi_materi.id_diskusi', 'asc')->take(10)
+            ->orderBy('diskusi_materi.id_diskusi', 'asc')->take(20)
             ->leftjoin('users', 'users.id', 'diskusi_materi.sender_id')
             ->select('diskusi_materi.*', 'users.email', 'users.name')
             ->where([

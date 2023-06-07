@@ -38,7 +38,7 @@ class ProfileController extends Controller
             'email' => 'required',
             'name' => 'required',
             'no_hp' => 'required',
-            'gambar' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
+            'file' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
         ]);
 
         if ($validasi->fails()) {
@@ -53,12 +53,12 @@ class ProfileController extends Controller
             return $this->error('Data gagal di-update');
         }
 
-        if ($request->hasFile('gambar')) {
+        if ($request->hasFile('file')) {
             if (file_exists(public_path('assets/img/' . $user->gambar))) {
                 unlink(public_path('assets/img/' . $user->gambar));
             }
 
-            $file = $request->file('gambar');
+            $file = $request->file('file');
             $gambar  = $siswa->nis . '.' . $file->extension();
             $path       = $file->move('assets/img', $gambar);
             $user->gambar = $gambar;
@@ -69,8 +69,6 @@ class ProfileController extends Controller
             'no_hp' => $request->input('no_hp'),
             'alamat' => $request->input('alamat')
         ]);
-        // $siswa->no_hp = $request->input('no_hp');
-        // $siswa->alamat = $request->input('alamat');
 
         if ($user->save()) {
             if ($siswa->save()) {
@@ -97,8 +95,8 @@ class ProfileController extends Controller
             $val = $validasi->errors()->all();
             return $this->error($val[0]);
         }
-        
-        $data = User::Select('password')->where([
+
+        $data = User::where([
             ['id', $request->input('id')],
             ['email', $request->input('email')],
         ])->first();
@@ -109,8 +107,9 @@ class ProfileController extends Controller
 
         if (Hash::check($request->password, $data->password)) {
             $data->password = Hash::make($request->new_password);
+
             if ($data->save()) {
-                return $this->success($data);
+                return $this->success("Berhasil diupdate");
             } else {
                 return $this->error('Data gagal diupdate');
             }
