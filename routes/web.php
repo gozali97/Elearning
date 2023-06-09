@@ -91,6 +91,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/manageSiswa/edit/{id}', 'edit')->name('admin.manageSiswa.edit');
         Route::post('/manageSiswa/update/{id}', 'update')->name('admin.manageSiswa.update');
         Route::get('/manageSiswa/destroy/{id}', 'destroy')->name('admin.manageSiswa.destroy');
+         Route::post('/manageSiswa/reset-password/{id}', 'resetPassword')->name('admin.manageSiswa.resetPassword');
     });
 });
 

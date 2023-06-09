@@ -172,6 +172,20 @@ class AdminSiswaController extends Controller
         }
     }
 
+    public function resetPassword(Request $request, $id)
+        {
+            $data = User::find($id);
+
+            if (!$data) {
+                return redirect()->back()->with('error', 'Data tidak ditemukan.');
+            }
+
+            $data->password = Hash::make($request->password);
+            $data->save();
+
+            return redirect()->back()->with('success', 'Password siswa berhasil direset.');
+        }
+
     public function destroy($id)
     {
         $data = User::where('id', $id)->first();
