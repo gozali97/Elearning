@@ -1,14 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\KelasController;
 use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\MataPelajaranController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SiswaTugasController;
 use App\Http\Controllers\Api\DiskusiController;
-
-use App\Models\Role;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,29 +17,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout']);
 
-Route::controller(SiswaTugasController::class)->group(function () {
-    Route::post('/siswa/listPelajaran', 'index')->name('siswa.lisPelajaran');
-    Route::post('/siswa/viewMateri', 'viewMateri')->name('siswa.viewMateri');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(ProfileController::class)->group(function () {
+        Route::prefix('/profile')->group(function () {
+            Route::post('/', 'index')->name('profil');
+            Route::post('/updateProfile', 'updateProfile')->name('profil.updateProfile');
+            Route::post('/updatePassword', 'updatePassword')->name('profil.updatePassword');
+        });
+    });
 
-    Route::post('/siswa/viewTugas', 'viewTugas')->name('siswa.viewTugas');
-    Route::post('/siswa/uploadTugas', 'store')->name('siswa.uploadTugas');
-    Route::post('/siswa/updateTugas', 'update')->name('siswa.updateTugas');
-});
+    Route::controller(SiswaTugasController::class)->group(function () {
+        Route::prefix('/siswa')->group(function () {
+            Route::post('/listPelajaran', 'index')->name('siswa.lisPelajaran');
+            Route::post('/viewMateri', 'viewMateri')->name('siswa.viewMateri');
+    
+            Route::post('/viewTugas', 'viewTugas')->name('siswa.viewTugas');
+            Route::post('/uploadTugas', 'store')->name('siswa.uploadTugas');
+            Route::post('/updateTugas', 'update')->name('siswa.updateTugas');
+        });
+    });
 
-Route::controller(DiskusiController::class)->group(function () {
-    Route::post('/materi/diskusi', 'index')->name('materi.diskusi');
-    Route::post('/materi/addDiskusi', 'store')->name('materi.addDiskusi');
-});
+    Route::controller(DiskusiController::class)->group(function () {
+        Route::prefix('/materi')->group(function () {
+            Route::post('/diskusi', 'index')->name('materi.diskusi');
+            Route::post('/addDiskusi', 'store')->name('materi.addDiskusi');
+        });
+    });
 
-Route::controller(ProfileController::class)->group(function () {
-    Route::post('/profil', 'index')->name('profil');
-    Route::post('/profil/updateProfile', 'updateProfile')->name('profil.updateProfile');
-    Route::post('/profil/updatePassword', 'updatePassword')->name('profil.updatePassword');
+    Route::post('/logout', [LoginController::class, 'logout']);
 });

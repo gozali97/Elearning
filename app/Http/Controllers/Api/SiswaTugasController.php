@@ -15,7 +15,6 @@ class SiswaTugasController extends Controller
 
     public function index(Request $request)
     {
-
         $nis = $request->input('nis');
 
         $data = JadwalPelajaran::query()
@@ -37,16 +36,13 @@ class SiswaTugasController extends Controller
 
     public function viewMateri(Request $request)
     {
-
         $id = $request->input('jadwal_id');
 
         $data = Materi::query()
-            ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
             ->leftJoin('tugas', 'tugas.materi_id', 'materi.id_materi')
-            ->select('materi.*', 'tugas.id_tugas', 'tugas.nama_tugas', 'tugas.file_tugas', 'jadwal_pelajaran.*')
+            ->select('materi.*', 'tugas.id_tugas')
             ->where('materi.jadwal_id', $id)
             ->get();
-
 
         if ($data) {
             return $this->success($data);
@@ -58,14 +54,13 @@ class SiswaTugasController extends Controller
     public function viewTugas(Request $request)
     {
         $id = $request->input('tugas_id');
-        $idd = $request->input('siswa_id');
+        $siswa_id = $request->input('siswa_id');
 
         $data = Tugas::where('id_tugas', $id)->first();
 
-
         if ($data) {
             $data['detail_tugas'] = DetailTugas::where([
-                ['siswa_id', $idd],
+                ['siswa_id', $siswa_id],
                 ['tugas_id', $data->id_tugas],
             ])->first();
             return $this->success($data);
@@ -107,7 +102,6 @@ class SiswaTugasController extends Controller
 
     public function update(Request $request)
     {
-
         $id = $request->input('detail_id');
 
         $data = DetailTugas::where('id_detail_tugas', $id)->first();

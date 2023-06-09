@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,7 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+            $user = User::where('email', $request->email)->first();
 
             if ($user->role->name === 'admin') {
                 return $this->success($user);
@@ -28,11 +29,8 @@ class LoginController extends Controller
             }
 
             if ($user->role->name === 'user') {
-                $user['siswa'] = User::query()
-                    ->select('nis')
-                    ->join('siswa', 'siswa.email', 'users.email')
-                    ->where('users.email', $user->email)
-                    ->first();
+                $user['siswa'] = Siswa::select('nis')->where('email', $user->email)->first();
+                $user['siswa']['token'] = $user->createToken("api_token")->plainTextToken;
                 return $this->success($user);
             }
         }
@@ -40,10 +38,9 @@ class LoginController extends Controller
         return $this->error("Email atau Password anda salah");
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        Auth::logout();
-
+        auth()->user()->tokens()->delete();
         return $this->success('200');
     }
 

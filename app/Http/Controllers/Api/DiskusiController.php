@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\DiskusiMateri;
-use App\Models\DiskusiMateriPenerima;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,29 +32,21 @@ class DiskusiController extends Controller
 
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
-            'email' => 'required',
             'materi_id' => 'required',
-            'isi_pesan' => 'required',
-            'waktu_pesan' => 'required'
+            'isi_pesan' => 'required'
         ]);
+        
+        $user = Auth::user();
 
         $materi_id = $validatedData['materi_id'];
         $isiPesan = $validatedData['isi_pesan'];
-        $waktuPesan = $validatedData['waktu_pesan'];
-
-        $sender_id =  User::select('id')
-            ->where('email', $validatedData['email'])
-            ->first();
 
         $balasan = DiskusiMateri::create([
             'materi_id' => $materi_id,
-            'sender_id' => $sender_id['id'],
+            'sender_id' => $user->id,
             'isi_pesan' => $isiPesan,
-            'receiver_role' => '2',
-            'created_at' => $waktuPesan,
-            'updated_at' => $waktuPesan
+            'receiver_role' => '2'
         ]);
 
         if ($balasan) {
