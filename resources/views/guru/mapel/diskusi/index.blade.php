@@ -229,7 +229,6 @@
                         messages.sort(function(a, b) {
                             return new Date(a.created_at) - new Date(b.created_at);
                         });
-
                         $.each(messages, function(index, message) {
                             if (message.sender_id == {{ Auth::user()->id }}) {
                                 messageHtml +=
@@ -259,7 +258,8 @@
                                     '<img src="{{ url('/assets/img/' . $materi->gambar) }}" alt="Image" class="rounded-circle avatar-md user-avatar">';
                                 messageHtml += '<div class="ms-3">';
                                 messageHtml +=
-                                    '<small>' +
+                                    '<small><span class="">' + message.name +
+                                    '</span>, ' +
                                     formatTime(message.created_at) + '</small>';
                                 messageHtml += '<div class="d-flex">';
                                 messageHtml +=

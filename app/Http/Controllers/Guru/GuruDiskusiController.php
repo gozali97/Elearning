@@ -79,9 +79,13 @@ class GuruDiskusiController extends Controller
             $userId = Auth::user()->id;
 
             $receivedMessages = DiskusiMateri::query()
+                ->join('users', 'users.id', 'diskusi_materi.sender_id')
+                ->join('siswa', 'siswa.email', 'users.email')
+                ->select('users.name', 'diskusi_materi.*')
                 ->where('materi_id', $materi_id)
                 ->where('receiver_role', 2)
                 ->get();
+
             $sentMessages = DiskusiMateri::query()
                 ->where('sender_id', $userId)
                 ->where('materi_id', $materi_id)
