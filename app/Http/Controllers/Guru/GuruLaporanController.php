@@ -23,23 +23,26 @@ class GuruLaporanController extends Controller
 
         $email = Auth::user()->email;
         $guru = Guru::where('email', $email)->first();
-        
+
 
         $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
+            ->join('jadwal_pelajaran', 'jadwal_pelajaran.kelas_id', 'siswa.kelas_id')
+            ->where('guru_id', $guru->nip)
             ->get();
 
         $detail = DetailTugas::query()
-                ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
-                ->join('materi', 'materi.id_materi', 'tugas.materi_id')
-                ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
-                ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
-                ->where('jadwal_pelajaran.guru_id', $guru->nip);
+            ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
+            ->join('materi', 'materi.id_materi', 'tugas.materi_id')
+            ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
+            ->join('siswa', 'siswa.kelas_id', 'jadwal_pelajaran.kelas_id')
+            ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
+            ->where('jadwal_pelajaran.guru_id', $guru->nip);
 
-         if (!empty($filter)) {
-                $detail = $detail->where('jadwal_pelajaran.mapel_id', $filter);
-            }
-        
+        if (!empty($filter)) {
+            $detail = $detail->where('jadwal_pelajaran.mapel_id', $filter);
+        }
+
         $tugas = $detail->get();
 
         $data = $data->map(function ($item) use ($tugas) {
@@ -49,8 +52,9 @@ class GuruLaporanController extends Controller
             return $item;
         });
 
-    $jadwal= JadwalPelajaran::query()
+        $jadwal = JadwalPelajaran::query()
             ->join('mata_pelajarans', 'mata_pelajarans.kode_mapel', 'jadwal_pelajaran.mapel_id')
+            ->where('guru_id', $guru->nip)
             ->get();
         return view('guru.laporan.index', compact('data', 'jadwal', 'selectedMapel'));
     }
@@ -63,19 +67,22 @@ class GuruLaporanController extends Controller
 
         $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
+            ->join('jadwal_pelajaran', 'jadwal_pelajaran.kelas_id', 'siswa.kelas_id')
+            ->where('guru_id', $guru->nip)
             ->get();
 
         $detail = DetailTugas::query()
-                ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
-                ->join('materi', 'materi.id_materi', 'tugas.materi_id')
-                ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
-                ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
-                ->where('jadwal_pelajaran.guru_id', $guru->nip);
+            ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
+            ->join('materi', 'materi.id_materi', 'tugas.materi_id')
+            ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
+            ->join('siswa', 'siswa.kelas_id', 'jadwal_pelajaran.kelas_id')
+            ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
+            ->where('jadwal_pelajaran.guru_id', $guru->nip);
 
-         if (!empty($filter)) {
-                $detail = $detail->where('jadwal_pelajaran.mapel_id', $filter);
-            }
-        
+        if (!empty($filter)) {
+            $detail = $detail->where('jadwal_pelajaran.mapel_id', $filter);
+        }
+
         $tugas = $detail->get();
 
         $data = $data->map(function ($item) use ($tugas) {
