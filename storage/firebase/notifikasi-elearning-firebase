@@ -1,0 +1,6 @@
+pindahkan file json dari firebase
+
+1. setelah membuat akun firebase dan menyambungkan dengan android, buat projek dengan projek 'Messaging' (Build)
+2. Masuk ke 'Project settings', klik 'Service accounts'
+3. Dibagian paling bawah ada tombol 'Generate new private key', klik dan download
+4. Pindahkan file tersebut ke folder ini, dan beri nama 'notifikasi-elearning-firebase' dengan extension '.json'
