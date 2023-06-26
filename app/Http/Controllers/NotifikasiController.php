@@ -6,6 +6,8 @@ use Google\Auth\Credentials\ServiceAccountCredentials;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
+// https://github.com/firebase/quickstart-nodejs/blob/cf70e0298e6a9e3fc55a28ead2e9493b2b7f1785/messaging/index.js
+// https://firebase.google.com/docs/cloud-messaging
 class NotifikasiController extends Controller
 {
     private $projectId;
@@ -16,7 +18,7 @@ class NotifikasiController extends Controller
 
     public function __construct()
     {
-        $this->projectId = 'notifikasi-elearning';
+        $this->projectId = 'notifikasi-elearning'; // * '<YOUR-PROJECT-ID>'
         $this->host = 'fcm.googleapis.com';
         $this->path = '/v1/projects/' . $this->projectId . '/messages:send';
         $this->messagingScope = 'https://www.googleapis.com/auth/firebase.messaging';
@@ -38,15 +40,14 @@ class NotifikasiController extends Controller
     }
 
     /**
-     * * Send HTTP request to FCM with given message
-     *
-     * @param array $fcmMessage
-     * @param boolean $isCreateGroup
+     * * Send HTTP request to FCM
      * 
-     * @return string
+     * @param array $fcmMessage
+     * 
+     * @return json|string
      * @throws GuzzleException
      */
-    private function sendFcmMessage($fcmMessage, $isCreateGroup = false)
+    private function sendFcmMessage($fcmMessage)
     {
         $accessToken = $this->getAccessToken();
         $options = [
@@ -58,18 +59,10 @@ class NotifikasiController extends Controller
         ];
 
         $client = new Client();
-        if ($isCreateGroup) {
-            $response = $client->post('https://fcm.googleapis.com/fcm/notification', $options);
-        } else {
-            $response = $client->post('https://' . $this->host . $this->path, $options);
-        }
-
+        $response = $client->post('https://' . $this->host . $this->path, $options);
         $responseData = json_decode($response->getBody(), true);
 
-        if ($isCreateGroup) {
-            return $responseData['notification_key'];
-        }
-        return json_encode($responseData, JSON_PRETTY_PRINT) . PHP_EOL;
+        return $responseData;
     }
 
     /**
@@ -77,7 +70,7 @@ class NotifikasiController extends Controller
      *
      * @return array
      */
-    private function buildCommonMessage($title, $message, $targetDevices = null, $topic = null, $group = null)
+    private function buildCommonMessage($title, $message, $targetDevice = null, $topic = null)
     {
         $message = [
             'message' => [
@@ -88,13 +81,9 @@ class NotifikasiController extends Controller
             ]
         ];
 
-        // Set the target devices
-        if ($targetDevices != null) {
-            if (is_array($targetDevices)) {
-                $message['message']['token'] = $targetDevices;
-            } else {
-                $message['message']['token'] = (string) $targetDevices;
-            }
+        // Set the target device
+        if ($targetDevice != null) {
+            $message['message']['token'] = $targetDevice;
         }
 
         // Set the topic
@@ -104,88 +93,54 @@ class NotifikasiController extends Controller
 
         return $message;
     }
-    
-    /**
-    * * Create Group
-    *
-    * @param array|string $registrationTokens = ['device_token_1', 'device_token_2']
-    * * Specify the target devices (Daftar token perangkat anggota grup)
-    * @param string $notificationKey = "appUser-Chris"
-    * * Nama unik untuk grup
-    * 
-    * @return string
-    */
-    public function createGroup($notificationKey, $registrationTokens)
-    {
-        // Create Group
-        $fcmMessage = [
-            'operation' => "create",
-            'notification_key_name' => $notificationKey,
-            'registration_ids' => $registrationTokens
-        ];
-
-        if ($notificationKey != null && $registrationTokens != null) {
-            return $this->sendFcmMessage($fcmMessage, true);
-        } else {
-            return "Parameter Notifikasi dan Token Devices tidak boleh kosong";
-        }
-    }
-    
-    /**
-     * * Set Notifikasi By Group
-     *
-     * @param string $title, $message, $group
-     * 
-     * @return string
-     */
-    public function setNotifikasiByGroup($title = 'FCM Notification', $message = 'Notification from FCM', $group)
-    {
-        if ($group != null) {
-            return $this->sendFcmMessage(
-                $this->buildCommonMessage($title, $message, group: $group)
-            );
-        } else {
-            return "Parameter Group tidak boleh kosong";
-        }
-    }
 
     /**
      * * Set Notifikasi By Topic
      *
      * @param string $title, $message, $topic
      * 
-     * @return string
+     * @return json|boolean|string terkirim, keterangan
      */
-    public function setNotifikasiByTopic($title = 'FCM Notification', $message = 'Notification from FCM', $topic)
+    public function setNotifikasiByTopic($title = 'FCM Notification', $message = 'Notification from Topic', $topic = null)
     {
         if ($topic != null) {
-            return $this->sendFcmMessage(
-                $this->buildCommonMessage($title, $message, topic: $topic)
-            );
+            return [
+                'terkirim' => true,
+                'keterangan' => $this->sendFcmMessage(
+                    $this->buildCommonMessage($title, $message, topic: $topic)
+                )
+            ];
         } else {
-            return "Parameter Topic tidak boleh kosong";
+            return [
+                'terkirim' => false,
+                'keterangan' => "Parameter Topic tidak boleh kosong"
+            ];
         }
     }
 
     /**
-     * * Set Notifikasi By Devices (Token)
+     * * Set Notifikasi By Device (Token)
      *
-     * @param string $title, $message
-     * @param array|string $targetDevices
-     * * Specify the target devices (token or list of tokens)
-     * * $targetDevices = ['device_token_1', 'device_token_2'];
-     * * $targetDevices = 'device_token_1';
+     * @param string $title, $message, $targetDevice
+     * * $targetDevice = 'device_token';
+     * * Specify the target device (token)
      * 
-     * @return string
+     * @return json|boolean|string terkirim, keterangan
      */
-    public function setNotifikasiByDevices($title = 'FCM Notification', $message = 'Notification from FCM', $targetDevices)
+    public function setNotifikasiByDevice($title = 'FCM Notification', $message = 'Notification from Device', $targetDevice= null)
     {
-        if ($targetDevices != null) {
-            return $this->sendFcmMessage(
-                $this->buildCommonMessage($title, $message, $targetDevices)
-            );
+        if ($targetDevice != null) {
+            return [
+                'terkirim' => true,
+                'keterangan' => $this->sendFcmMessage(
+                    $this->buildCommonMessage($title, $message, $targetDevice)
+                )
+            ];
         } else {
-            return "Parameter Devices (Token Devices) tidak boleh kosong";
+            return [
+                'terkirim' => false,
+                'keterangan' => "Parameter Device (Token Device) tidak boleh kosong"
+            ];
         }
     }
 }

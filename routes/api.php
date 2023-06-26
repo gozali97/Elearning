@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SiswaTugasController;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/notif', [NotifikasiController::class, 'setNotifikasiByDevice']); //cek
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(ProfileController::class)->group(function () {
