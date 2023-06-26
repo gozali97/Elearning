@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\NotifikasiController;
 use App\Models\DetailTugas;
 use App\Models\Guru;
 use App\Models\JadwalPelajaran;
@@ -15,6 +16,13 @@ use Illuminate\Support\Facades\Validator;
 
 class GuruMataPelajaranController extends Controller
 {
+    private $notifikasi;
+
+    public function __construct()
+    {
+        $this->notifikasi = new NotifikasiController();
+    }
+    
     public function index()
     {
 
@@ -76,7 +84,6 @@ class GuruMataPelajaranController extends Controller
                 }
             }
 
-
             Materi::create([
                 'jadwal_id' => $request->jadwal_id,
                 'nama_materi' => $request->nama,
@@ -84,7 +91,14 @@ class GuruMataPelajaranController extends Controller
                 'path_file' => implode(',', $files), // Mengubah array menjadi string dipisahkan oleh koma
             ]);
 
-            return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Data Materi Pelajaran berhasil ditambahkan.');
+            $notif = '';
+            if ($this->notifikasi->setNotifikasiByTopic('Penambahan Materi', "Materi dengan nama '" . $request->nama . "' telah ditambahkan", $request->jadwal_id)['terkirim']) {
+                $notif = ' Notif berhasil dikirim.';
+            } else {
+                $notif = ' Notif gagal dikirim.';
+            }
+
+            return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Data Materi Pelajaran berhasil ditambahkan.' . $notif);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data materi.' . $e->getMessage());
         }
@@ -94,6 +108,8 @@ class GuruMataPelajaranController extends Controller
     {
         try {
             $data = Materi::where('id_materi', $id)->first();
+            $message = '';
+            $notif = '';
 
             if ($request->hasFile('file')) {
 
@@ -105,13 +121,38 @@ class GuruMataPelajaranController extends Controller
                 $path = $request->file('file')->move('assets/img', $file);
 
                 $data->path_file = $file;
+                $message = "File materi pada Materi '" . $request->nama . "' telah diupdate";
+            }
+
+            if ($data->nama_materi !== $request->nama) {
+                if ($message) {
+                    $message = $message . ", dan nama Materi sebelumnya '" . $data->nama_materi . "'"; 
+                } else {
+                    $message = "Nama Materi '" . $data->nama_materi . "' telah diubah namanya menjadi '". $request->nama . "'";
+                }
+            }
+
+            if ($data->deskripsi !== $request->deskripsi) {
+                if ($message) {
+                    $message = $message . ', dengan deskripsi telah diupdate';
+                } else if ($data->nama_materi === $request->nama) {
+                    $message = "Deskripsi telah diupdate pada Materi '" . $data->nama_materi . "'";
+                }
             }
 
             $data->nama_materi = $request->nama;
             $data->deskripsi = $request->deskripsi;
             $data->save();
 
-            return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.');
+            if ($message) {
+                if ($this->notifikasi->setNotifikasiByTopic('Perubahan Materi', $message, $data->jadwal_id)['terkirim']) {
+                    $notif = ' Notif berhasil dikirim.';
+                } else {
+                    $notif = ' Notif gagal dikirim.';
+                }
+            }
+
+            return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi Pelajaran berhasil diupdate.' . $notif);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data materi.' . $e->getMessage());
         }
@@ -128,10 +169,18 @@ class GuruMataPelajaranController extends Controller
         if (file_exists($filePath)) {
             unlink($filePath);
         }
+        $message = $data->nama_materi;
+        $notif = '';
 
         $data->delete();
+        
+        if ($this->notifikasi->setNotifikasiByTopic('Materi dihapus', "Materi dengan nama '" . $message . "' telah dihapus", $data->jadwal_id)['terkirim']) {
+            $notif = ' Notif berhasil dikirim.';
+        } else {
+            $notif = ' Notif gagal dikirim.';
+        }
 
-        return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi berhasil dihapus.');
+        return redirect()->route('guru.listajar.view', $data->jadwal_id)->with('success', 'Materi berhasil dihapus.' . $notif);
     }
 
 
@@ -163,7 +212,14 @@ class GuruMataPelajaranController extends Controller
                 'tanggal_selesai' => $request->tanggal_selesai,
             ]);
 
-            return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Tugas berhasil ditambahkan.');
+            $notif = '';
+            if ($this->notifikasi->setNotifikasiByTopic('Penambahan Tugas', "Tugas telah ditambahkan, segera cek", $request->jadwal_id)['terkirim']) {
+                $notif = ' Notif berhasil dikirim.';
+            } else {
+                $notif = ' Notif gagal dikirim.';
+            }
+
+            return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Tugas berhasil ditambahkan.' . $notif);
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan data tugas.' . $e->getMessage());
         }

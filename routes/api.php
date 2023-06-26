@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [LoginController::class, 'login']);
-Route::post('/notif', [NotifikasiController::class, 'setNotifikasiByDevice']); //cek
+// Route::post('/notif', [NotifikasiController::class, 'setNotifikasiByDevice']); // * untuk cek notif
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(ProfileController::class)->group(function () {
