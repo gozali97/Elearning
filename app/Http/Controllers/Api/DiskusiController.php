@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\NotifikasiController;
 use App\Models\DiskusiMateri;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,9 @@ class DiskusiController extends Controller
     {
         $validatedData = $request->validate([
             'materi_id' => 'required',
-            'isi_pesan' => 'required'
+            'isi_pesan' => 'required',
+            'jadwal_id' => 'required',
+            'nama_materi' => 'required'
         ]);
         
         $user = Auth::user();
@@ -50,7 +53,15 @@ class DiskusiController extends Controller
         ]);
 
         if ($balasan) {
-            return $this->success('Pesan berhasil dibalas.');
+            $notifikasi = new NotifikasiController();
+            
+            if ($notifikasi->setNotifikasiByTopic("Pesan Baru pada diskusi materi '" . $request->nama_materi . "'", '~ ' . $user->name . ' '  . $request->isi_pesan, $request->jadwal_id)['terkirim']) {
+                $notif = ' Notif berhasil dikirim.';
+            } else {
+                $notif = ' Notif gagal dikirim.';
+            }
+
+            return $this->success('Pesan berhasil dibalas.' . $notif);
         } else {
             return $this->error('Data tidak ditemukan');
         }
