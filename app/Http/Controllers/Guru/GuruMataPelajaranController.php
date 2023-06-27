@@ -211,12 +211,21 @@ class GuruMataPelajaranController extends Controller
                 'tanggal_mulai' => $request->tanggal_mulai,
                 'tanggal_selesai' => $request->tanggal_selesai,
             ]);
-
+            
             $notif = '';
-            if ($this->notifikasi->setNotifikasiByTopic('Penambahan Tugas', "Tugas telah ditambahkan, segera cek", $request->jadwal_id)['terkirim']) {
-                $notif = ' Notif berhasil dikirim.';
+            if ($this->notifikasi->setNotifikasiByTopic('Penambahan Tugas', "Tugas '" 
+                    . $request->nama . "' telah ditambahkan, segera cek!", $request->jadwal_id)['terkirim']) {
+                $notif = ' Notif berhasil dikirim';
             } else {
-                $notif = ' Notif gagal dikirim.';
+                $notif = ' Notif gagal dikirim';
+            }
+
+            if ($this->notifikasi->setScheduledDatetime('Tenggat Tugas', "Deatline Tugas '" 
+                    . $request->nama . "' tersisa 45 menit, tolong dicek kembali tugas yang anda kumpulkan", 
+                    $request->jadwal_id, $request->tanggal_selesai.' 23:14:30')['terkirim']) {
+                $notif = $notif . ", Schedule berhasil diatur.";
+            } else {
+                $notif = $notif . ", Schedule gagal diatur.";
             }
 
             return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Tugas berhasil ditambahkan.' . $notif);

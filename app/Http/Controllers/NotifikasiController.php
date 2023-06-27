@@ -70,7 +70,7 @@ class NotifikasiController extends Controller
      *
      * @return array
      */
-    private function buildCommonMessage($title, $message, $targetDevice = null, $topic = null)
+    private function buildCommonMessage($title, $message, $targetDevice = null, $topic = null, $scheduledDatetime = null)
     {
         $message = [
             'message' => [
@@ -89,9 +89,58 @@ class NotifikasiController extends Controller
         // Set the topic
         if ($topic != null) {
             $message['message']['topic'] = $topic;
+        } 
+        
+        // Set the scheduled datetime
+        if ($scheduledDatetime != null) {
+            $message['message']['android'] = [
+                'ttl' => $this->calculateTtl($scheduledDatetime),
+                'priority' => 'normal',
+                'delivery_priority' => 'high',
+                'collapse_key' => 'notifikasi'
+            ];
         }
 
         return $message;
+    }
+
+    /**
+     * * Calculate the time to live (TTL) value based on the scheduled datetime.
+     *
+     * @param string $scheduledDatetime
+     * @return int
+     */
+    private function calculateTtl($scheduledDatetime)
+    {
+        date_default_timezone_set('Asia/Jakarta');
+        $scheduledTimestamp = strtotime($scheduledDatetime);
+        $currentTimestamp = time();
+        $ttl = $scheduledTimestamp - $currentTimestamp;
+        return $ttl > 0 ? $ttl : 0;
+    }
+
+    /**
+     * * Set Scheduled Date-time 
+     * 
+     * @param string $scheduledDatetime = '2023-06-30 12:00:00'
+     * * untuk format schedule yang dikirim adalah 'yyyy-MM-dd HH:mm:ss'
+     * 
+     * @return json|boolean|string terkirim, keterangan
+     */
+    public function setScheduledDatetime($title = 'FCM Notification', $message = 'Notification from Scheduled', $topic = null, $scheduledDatetime = null) {
+        if ($topic != null && $scheduledDatetime != null) {
+            return [
+                'terkirim' => true,
+                'keterangan' => $this->sendFcmMessage(
+                    $this->buildCommonMessage($title, $message, topic: $topic, scheduledDatetime: $scheduledDatetime)
+                )
+            ];
+        } else {
+            return [
+                'terkirim' => false,
+                'keterangan' => "Parameter Topic dan Scheduled tidak boleh kosong"
+            ];
+        }
     }
 
     /**
@@ -127,7 +176,7 @@ class NotifikasiController extends Controller
      * 
      * @return json|boolean|string terkirim, keterangan
      */
-    public function setNotifikasiByDevice($title = 'FCM Notification', $message = 'Notification from Device', $targetDevice= null)
+    public function setNotifikasiByDevice($title = 'FCM Notification', $message = 'Notification from Target Device', $targetDevice= null)
     {
         if ($targetDevice != null) {
             return [
