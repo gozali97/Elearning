@@ -7,7 +7,9 @@
     "require": {
         "php": "^8.0.2",
         "barryvdh/laravel-dompdf": "^2.0",
-        "guzzlehttp/guzzle": "^7.2",
+        "google/apiclient": "^2.15",
+        "google/auth": "^1.28",
+        "guzzlehttp/guzzle": "^7.7",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "3.0",
         "laravel/tinker": "^2.7",
