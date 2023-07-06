@@ -185,6 +185,7 @@
                         materi_id: "{{ $materi->id_materi }}",
                         sender_id: "{{ Auth::user()->id }}",
                         kelas_id: "{{ $materi->kelas_id }}",
+                        jadwal_id: "{{ $materi->jadwal_id }}",
                         isi_pesan: message
                     },
                     success: function(response) {

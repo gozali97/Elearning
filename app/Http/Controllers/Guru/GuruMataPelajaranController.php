@@ -22,7 +22,7 @@ class GuruMataPelajaranController extends Controller
     {
         $this->notifikasi = new NotifikasiController();
     }
-    
+
     public function index()
     {
 
@@ -56,7 +56,7 @@ class GuruMataPelajaranController extends Controller
             ->where('materi.jadwal_id', $id)
             ->get();
 
-
+        // dd($data);
         return view('guru.mapel.detail', compact('data', 'jadwal'));
     }
 
@@ -126,9 +126,9 @@ class GuruMataPelajaranController extends Controller
 
             if ($data->nama_materi !== $request->nama) {
                 if ($message) {
-                    $message = $message . ", dan nama Materi sebelumnya '" . $data->nama_materi . "'"; 
+                    $message = $message . ", dan nama Materi sebelumnya '" . $data->nama_materi . "'";
                 } else {
-                    $message = "Nama Materi '" . $data->nama_materi . "' telah diubah namanya menjadi '". $request->nama . "'";
+                    $message = "Nama Materi '" . $data->nama_materi . "' telah diubah namanya menjadi '" . $request->nama . "'";
                 }
             }
 
@@ -173,7 +173,7 @@ class GuruMataPelajaranController extends Controller
         $notif = '';
 
         $data->delete();
-        
+
         if ($this->notifikasi->setNotifikasiByTopic('Materi dihapus', "Materi dengan nama '" . $message . "' telah dihapus", $data->jadwal_id)['terkirim']) {
             $notif = ' Notif berhasil dikirim.';
         } else {
@@ -211,18 +211,22 @@ class GuruMataPelajaranController extends Controller
                 'tanggal_mulai' => $request->tanggal_mulai,
                 'tanggal_selesai' => $request->tanggal_selesai,
             ]);
-            
+
             $notif = '';
-            if ($this->notifikasi->setNotifikasiByTopic('Penambahan Tugas', "Tugas '" 
-                    . $request->nama . "' telah ditambahkan, segera cek!", $request->jadwal_id)['terkirim']) {
+            if ($this->notifikasi->setNotifikasiByTopic('Penambahan Tugas', "Tugas '"
+                . $request->nama . "' telah ditambahkan, segera cek!", $request->jadwal_id)['terkirim']) {
                 $notif = ' Notif berhasil dikirim';
             } else {
                 $notif = ' Notif gagal dikirim';
             }
 
-            if ($this->notifikasi->setScheduledDatetime('Tenggat Tugas', "Deatline Tugas '" 
-                    . $request->nama . "' tersisa 45 menit, tolong dicek kembali tugas yang anda kumpulkan", 
-                    $request->jadwal_id, $request->tanggal_selesai.' 23:14:30')['terkirim']) {
+            if ($this->notifikasi->setScheduledDatetime(
+                'Tenggat Tugas',
+                "Deatline Tugas '"
+                    . $request->nama . "' tersisa 45 menit, tolong dicek kembali tugas yang anda kumpulkan",
+                $request->jadwal_id,
+                $request->tanggal_selesai . ' 23:14:30'
+            )['terkirim']) {
                 $notif = $notif . ", Schedule berhasil diatur.";
             } else {
                 $notif = $notif . ", Schedule gagal diatur.";
@@ -261,18 +265,24 @@ class GuruMataPelajaranController extends Controller
         }
     }
 
-    public function viewTugas($id)
+    public function viewTugas($tugas_id, $mapel_id)
     {
+
+        $email = Auth::user()->email;
+        $guru = Guru::where('email', $email)->first();
 
         $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
+            ->join('jadwal_pelajaran', 'jadwal_pelajaran.kelas_id', 'siswa.kelas_id')
+            ->where('guru_id', $guru->nip)
+            ->where('mapel_id', $mapel_id)
             ->get();
 
         $tugas = DetailTugas::query()
             ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
             ->join('materi', 'materi.id_materi', 'tugas.materi_id')
             ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
-            ->where('tugas.id_tugas', $id)
+            ->where('tugas.id_tugas', $tugas_id)
             ->get();
 
         $data = $data->map(function ($item) use ($tugas) {

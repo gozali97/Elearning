@@ -25,12 +25,7 @@ class NotifikasiController extends Controller
         $this->scopes = [$this->messagingScope];
     }
 
-    /**
-     * * Get a valid access token.
-     *
-     * @return string
-     * @throws GuzzleException
-     */
+
     private function getAccessToken()
     {
         $key = json_decode(file_get_contents(storage_path('firebase/notifikasi-elearning-firebase.json')), true);
@@ -39,14 +34,6 @@ class NotifikasiController extends Controller
         return $jwtClient->getLastReceivedToken()['access_token'];
     }
 
-    /**
-     * * Send HTTP request to FCM
-     * 
-     * @param array $fcmMessage
-     * 
-     * @return json|string
-     * @throws GuzzleException
-     */
     private function sendFcmMessage($fcmMessage)
     {
         $accessToken = $this->getAccessToken();
@@ -65,11 +52,6 @@ class NotifikasiController extends Controller
         return $responseData;
     }
 
-    /**
-     * * Construct a JSON object that will be used to define the common parts of a notification message that will be sent to any app instance.
-     *
-     * @return array
-     */
     private function buildCommonMessage($title, $message, $targetDevice = null, $topic = null, $scheduledDatetime = null)
     {
         $message = [
@@ -89,8 +71,8 @@ class NotifikasiController extends Controller
         // Set the topic
         if ($topic != null) {
             $message['message']['topic'] = $topic;
-        } 
-        
+        }
+
         // Set the scheduled datetime
         if ($scheduledDatetime != null) {
             $message['message']['android'] = [
@@ -103,13 +85,6 @@ class NotifikasiController extends Controller
 
         return $message;
     }
-
-    /**
-     * * Calculate the time to live (TTL) value based on the scheduled datetime.
-     *
-     * @param string $scheduledDatetime
-     * @return int
-     */
     private function calculateTtl($scheduledDatetime)
     {
         date_default_timezone_set('Asia/Jakarta');
@@ -119,15 +94,8 @@ class NotifikasiController extends Controller
         return $ttl > 0 ? $ttl : 0;
     }
 
-    /**
-     * * Set Scheduled Date-time 
-     * 
-     * @param string $scheduledDatetime = '2023-06-30 12:00:00'
-     * * untuk format schedule yang dikirim adalah 'yyyy-MM-dd HH:mm:ss'
-     * 
-     * @return json|boolean|string terkirim, keterangan
-     */
-    public function setScheduledDatetime($title = 'FCM Notification', $message = 'Notification from Scheduled', $topic = null, $scheduledDatetime = null) {
+    public function setScheduledDatetime($title = 'FCM Notification', $message = 'Notification from Scheduled', $topic = null, $scheduledDatetime = null)
+    {
         if ($topic != null && $scheduledDatetime != null) {
             return [
                 'terkirim' => true,
@@ -143,13 +111,6 @@ class NotifikasiController extends Controller
         }
     }
 
-    /**
-     * * Set Notifikasi By Topic
-     *
-     * @param string $title, $message, $topic
-     * 
-     * @return json|boolean|string terkirim, keterangan
-     */
     public function setNotifikasiByTopic($title = 'FCM Notification', $message = 'Notification from Topic', $topic = null)
     {
         if ($topic != null) {
@@ -166,17 +127,7 @@ class NotifikasiController extends Controller
             ];
         }
     }
-
-    /**
-     * * Set Notifikasi By Device (Token)
-     *
-     * @param string $title, $message, $targetDevice
-     * * $targetDevice = 'device_token';
-     * * Specify the target device (token)
-     * 
-     * @return json|boolean|string terkirim, keterangan
-     */
-    public function setNotifikasiByDevice($title = 'FCM Notification', $message = 'Notification from Target Device', $targetDevice= null)
+    public function setNotifikasiByDevice($title = 'FCM Notification', $message = 'Notification from Target Device', $targetDevice = null)
     {
         if ($targetDevice != null) {
             return [

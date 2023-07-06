@@ -11,7 +11,8 @@
     <div class="col-12 col-lg-12">
         <div class="row">
             <div class="col-12">
-                <a href="/listajar" class="btn btn sm btn-outline-secondary d-inline-flex mb-3"><i
+                <a href="/listajar/view/{{ $data[0]->kode_jadwal }}"
+                    class="btn btn sm btn-outline-secondary d-inline-flex mb-3"><i
                         class="bi bi-arrow-left mt-1 d-inline-flex"></i>Kembali</a>
                 <div class="card">
                     <div class="card-header">

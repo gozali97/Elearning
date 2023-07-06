@@ -91,7 +91,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/manageSiswa/edit/{id}', 'edit')->name('admin.manageSiswa.edit');
         Route::post('/manageSiswa/update/{id}', 'update')->name('admin.manageSiswa.update');
         Route::get('/manageSiswa/destroy/{id}', 'destroy')->name('admin.manageSiswa.destroy');
-         Route::post('/manageSiswa/reset-password/{id}', 'resetPassword')->name('admin.manageSiswa.resetPassword');
+        Route::post('/manageSiswa/reset-password/{id}', 'resetPassword')->name('admin.manageSiswa.resetPassword');
     });
 });
 
@@ -108,7 +108,7 @@ Route::middleware(['auth', 'role:guru'])->group(function () {
         Route::post('/listajar/updateTugas/{id}', 'updateTugas')->name('guru.listajar.updateTugas');
         Route::get('/listajar/destroy/{id}', 'destroy')->name('guru.listajar.destroy');
 
-        Route::get('/listajar/view-tugas/{id}', 'viewTugas')->name('guru.listajar.viewTugas');
+        Route::get('/listajar/view-tugas/{tugas_id}/{mapel_id}', 'viewTugas')->name('guru.listajar.viewTugas');
         Route::get('/listajar/listsiswa/{id}', 'viewSiswa')->name('guru.listajar.listsiswa');
 
         //Nilai tugas siswa

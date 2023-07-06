@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Guru;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\NotifikasiController;
 use App\Models\DiskusiMateri;
 use App\Models\DiskusiMateriPenerima;
 use App\Models\Materi;
@@ -36,12 +37,17 @@ class GuruDiskusiController extends Controller
                 'sender_id' => 'required',
                 'isi_pesan' => 'required',
                 'kelas_id' => 'required',
+                'jadwal_id' => 'required',
             ]);
 
             $materiId = $validatedData['materi_id'];
             $kelasiId = $validatedData['kelas_id'];
             $senderId = $validatedData['sender_id'];
             $isiPesan = $validatedData['isi_pesan'];
+            $jadwalId = $validatedData['jadwal_id'];
+
+            $user = Auth::user();
+            $materi = Materi::where('id_materi', $materiId)->first();
 
             $pesan = DiskusiMateri::create([
                 'materi_id' => $materiId,
@@ -49,6 +55,8 @@ class GuruDiskusiController extends Controller
                 'isi_pesan' => $isiPesan,
                 'receiver_role' => '3',
             ]);
+
+
             $receiverIds = User::query()
                 ->join('siswa', 'siswa.email', 'users.email')
                 ->join('kelas', 'kelas.id_kelas', 'siswa.kelas_id')
@@ -59,17 +67,36 @@ class GuruDiskusiController extends Controller
                 ->where('role_id', 3)
                 ->pluck('users.id');
 
+
+
             foreach ($receiverIds as $receiverId) {
                 DiskusiMateriPenerima::create([
                     'diskusi_materi_id' => $pesan->materi_id,
                     'receiver_id' => $receiverId,
                 ]);
             }
+            $notif = '';
+            $notifikasi = new NotifikasiController();
+
+            if ($notifikasi->setNotifikasiByTopic("Pesan Baru pada diskusi materi '" . $materi->nama_materi . "'", '~ ' . $user->name . ' ' . $isiPesan, $jadwalId)['terkirim']) {
+                $notif = ' Notif berhasil dikirim.';
+            } else {
+                $notif = ' Notif gagal dikirim.';
+            }
+
+            // $notifikasi = new NotifikasiController();
+
+            // if ($notifikasi->setNotifikasiByDevice("Pesan Baru pada diskusi materi '" . $materi->nama_materi . "'", '~ ' . $user->name . ' ' . $isiPesan, $jadwalId)['terkirim']) {
+            //     $notif = ' Notif berhasil dikirim.';
+            // } else {
+            //     $notif = ' Notif gagal dikirim.';
+            // }
+
             DB::commit();
-            return redirect()->back()->with('success', 'Pesan berhasil dikirim ke seluruh murid.');
+            return redirect()->back()->with('success', 'Notifikasi berhasil dikirim.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data tugas.' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 

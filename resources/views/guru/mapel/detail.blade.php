@@ -273,7 +273,7 @@
                                         <button data-bs-toggle="modal" data-bs-target="#full-scrn{{ $d->id_materi }}"
                                             class="btn btn-info d-inline-flex align-items-center"><i
                                                 class="bi bi-info-circle-fill me-1"></i>Lihat Tugas</button>
-                                        <a href="{{ route('guru.listajar.viewTugas', $d->id_tugas) }}"
+                                        <a href="{{ route('guru.listajar.viewTugas', ['tugas_id' => $d->id_tugas, 'mapel_id' => $d->mapel_id]) }}"
                                             class="btn btn-warning d-inline-flex align-items-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 fill="currentColor" class="bi bi-file-earmark-pdf mx-1 d-inline-flex"

@@ -24,11 +24,13 @@ class GuruLaporanController extends Controller
         $email = Auth::user()->email;
         $guru = Guru::where('email', $email)->first();
 
+        $mapel_default = JadwalPelajaran::query()->where('guru_id', $guru->nip)->first();
 
         $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
             ->join('jadwal_pelajaran', 'jadwal_pelajaran.kelas_id', 'siswa.kelas_id')
             ->where('guru_id', $guru->nip)
+            ->where('jadwal_pelajaran.mapel_id', $mapel_default->mapel_id)
             ->get();
 
         $detail = DetailTugas::query()
@@ -65,10 +67,13 @@ class GuruLaporanController extends Controller
         $email = Auth::user()->email;
         $guru = Guru::where('email', $email)->first();
 
+        $mapel_default = JadwalPelajaran::query()->where('guru_id', $guru->nip)->first();
+
         $data = Siswa::query()
             ->join('users', 'users.email', 'siswa.email')
             ->join('jadwal_pelajaran', 'jadwal_pelajaran.kelas_id', 'siswa.kelas_id')
             ->where('guru_id', $guru->nip)
+            ->where('jadwal_pelajaran.mapel_id', $mapel_default->mapel_id)
             ->get();
 
         $detail = DetailTugas::query()
