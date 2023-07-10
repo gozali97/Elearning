@@ -33,26 +33,31 @@ class GuruLaporanController extends Controller
             ->where('jadwal_pelajaran.mapel_id', $mapel_default->mapel_id)
             ->get();
 
+
+
         $detail = DetailTugas::query()
             ->join('tugas', 'tugas.id_tugas', 'detail_tugas.tugas_id')
             ->join('materi', 'materi.id_materi', 'tugas.materi_id')
             ->join('jadwal_pelajaran', 'jadwal_pelajaran.kode_jadwal', 'materi.jadwal_id')
-            ->join('siswa', 'siswa.kelas_id', 'jadwal_pelajaran.kelas_id')
+            ->join('siswa', 'siswa.nis', 'detail_tugas.siswa_id')
             ->whereIn('detail_tugas.siswa_id', $data->pluck('nis'))
             ->where('jadwal_pelajaran.guru_id', $guru->nip);
+
 
         if (!empty($filter)) {
             $detail = $detail->where('jadwal_pelajaran.mapel_id', $filter);
         }
 
         $tugas = $detail->get();
-
+        // dd($tugas);
         $data = $data->map(function ($item) use ($tugas) {
             $item->tugas = collect($tugas)->filter(function ($tugasItem) use ($item) {
                 return $tugasItem['siswa_id'] == $item->nis;
             })->values();
             return $item;
         });
+
+        // dd($data);
 
         $jadwal = JadwalPelajaran::query()
             ->join('mata_pelajarans', 'mata_pelajarans.kode_mapel', 'jadwal_pelajaran.mapel_id')

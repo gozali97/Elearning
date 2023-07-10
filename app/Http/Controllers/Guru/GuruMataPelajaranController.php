@@ -220,17 +220,17 @@ class GuruMataPelajaranController extends Controller
                 $notif = ' Notif gagal dikirim';
             }
 
-            if ($this->notifikasi->setScheduledDatetime(
-                'Tenggat Tugas',
-                "Deatline Tugas '"
-                    . $request->nama . "' tersisa 45 menit, tolong dicek kembali tugas yang anda kumpulkan",
-                $request->jadwal_id,
-                $request->tanggal_selesai . ' 23:14:30'
-            )['terkirim']) {
-                $notif = $notif . ", Schedule berhasil diatur.";
-            } else {
-                $notif = $notif . ", Schedule gagal diatur.";
-            }
+            // if ($this->notifikasi->setScheduledDatetime(
+            //     'Tenggat Tugas',
+            //     "Deatline Tugas '"
+            //         . $request->nama . "' tersisa 45 menit, tolong dicek kembali tugas yang anda kumpulkan",
+            //     $request->jadwal_id,
+            //     $request->tanggal_selesai . ' 23:14:30'
+            // )['terkirim']) {
+            //     $notif = $notif . ", Schedule berhasil diatur.";
+            // } else {
+            //     $notif = $notif . ", Schedule gagal diatur.";
+            // }
 
             return redirect()->route('guru.listajar.view', $request->jadwal_id)->with('success', 'Tugas berhasil ditambahkan.' . $notif);
         } catch (\Exception $e) {
@@ -291,6 +291,8 @@ class GuruMataPelajaranController extends Controller
             })->values();
             return $item;
         });
+
+        // dd($data);
         return view('guru.mapel.upload-siswa', compact('data'));
     }
 
