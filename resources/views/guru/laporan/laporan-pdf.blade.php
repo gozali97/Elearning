@@ -33,37 +33,37 @@
 
 <body>
     <h2 style="text-align:center;">Laporan Nilai Siswa</h2>
-        <h5 style="text-align:center;">Mata Pelajaran {{$mapel->nama_mapel}}</h5>
+    <h5 style="text-align:center;">Mata Pelajaran {{ $mapel->nama_mapel }}</h5>
     <table>
         <thead>
             <tr>
                 <th>No</th>
                 <th>Nama</th>
-                 @for ($i= 1; $i<=10 ;$i++)
-                <th>Tugas {{$i}}</th>
+                @for ($i = 1; $i <= 10; $i++)
+                    <th>Tugas {{ $i }}</th>
                 @endfor
             </tr>
         </thead>
         <tbody>
-            @if ($data->isEmpty())
+            @if ($tugas == 0)
                 <tr>
                     <td colspan="6" style="font-weight: bold; text-align: center;">Tidak ada data</td>
                 </tr>
             @else
-                @foreach ($data as $d)
+                @foreach ($tugas as $d)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $d->name }}</td>
-                       @php
+                        <td>{{ $d['nama_siswa'] }}</td>
+                        @php
                             $nomor = 1;
                         @endphp
-                        @foreach ($d->tugas as $tugas)
+                        @foreach ($d['nilai'] as $tugas)
                             @php
-                            $nomor+=1
-                        @endphp
-                        <td>{{ $tugas->nilai }}</td>
+                                $nomor += 1;
+                            @endphp
+                            <td>{{ $tugas['nilai'] }}</td>
                         @endforeach
-                            @for($i=$nomor; $i<=10; $i++) 
+                        @for ($i = $nomor; $i <= 10; $i++)
                             <td>0</td>
                         @endfor
                     </tr>
