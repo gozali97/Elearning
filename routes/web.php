@@ -45,6 +45,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/manageGuru/store', 'store')->name('manageGuru.store');
         Route::post('/manageGuru/update/{id}', 'update')->name('manageGuru.update');
         Route::get('/manageGuru/destroy/{id}', 'destroy')->name('manageGuru.destroy');
+        Route::post('/manageGuru/reset-password/{id}', 'resetPassword')->name('admin.manageGuru.resetPassword');
     });
 
     Route::controller(AdminAdminKelasController::class)->group(function () {

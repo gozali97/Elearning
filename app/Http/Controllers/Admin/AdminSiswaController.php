@@ -20,13 +20,13 @@ class AdminSiswaController extends Controller
     {
 
         $data = Siswa::query()
-                ->join('users', 'users.email', 'siswa.email')
-                ->get();
+            ->join('users', 'users.email', 'siswa.email')
+            ->get();
 
         $kelas = Kelas::all();
         $jurusan = Jurusan::all();
 
-        return view('admin.siswa.index', compact('data','kelas', 'jurusan'));
+        return view('admin.siswa.index', compact('data', 'kelas', 'jurusan'));
     }
 
     public function store(Request $request)
@@ -173,18 +173,18 @@ class AdminSiswaController extends Controller
     }
 
     public function resetPassword(Request $request, $id)
-        {
-            $data = User::find($id);
+    {
+        $data = User::find($id);
 
-            if (!$data) {
-                return redirect()->back()->with('error', 'Data tidak ditemukan.');
-            }
-
-            $data->password = Hash::make($request->password);
-            $data->save();
-
-            return redirect()->back()->with('success', 'Password siswa berhasil direset.');
+        if (!$data) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
         }
+
+        $data->password = Hash::make($request->password);
+        $data->save();
+
+        return redirect()->back()->with('success', 'Password siswa berhasil direset.');
+    }
 
     public function destroy($id)
     {

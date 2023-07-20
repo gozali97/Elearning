@@ -144,22 +144,36 @@ class ManageGuruController extends Controller
             return redirect()->route('manageGuru.index')->with('success', 'Data Guru berhasil perbarui.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data guru.'.$e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data guru.' . $e->getMessage());
         }
     }
 
-    public function destroy($id)
-{
-    $data = User::where('id', $id)->first();
+    public function resetPassword(Request $request, $id)
+    {
+        $data = User::find($id);
 
-    if (!$data) {
-        return redirect()->back()->with('error', 'Guru tidak ditemukan.');
+        if (!$data) {
+            return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
+        $data->password = Hash::make($request->password);
+        $data->save();
+
+        return redirect()->back()->with('success', 'Password guru berhasil direset.');
     }
 
-    $guru = Guru::where('email', $data->email)->first();
-    $guru->delete();
-    $data->delete();
+    public function destroy($id)
+    {
+        $data = User::where('id', $id)->first();
 
-    return redirect()->route('manageGuru.index')->with('success', 'Guru berhasil dihapus.');
-}
+        if (!$data) {
+            return redirect()->back()->with('error', 'Guru tidak ditemukan.');
+        }
+
+        $guru = Guru::where('email', $data->email)->first();
+        $guru->delete();
+        $data->delete();
+
+        return redirect()->route('manageGuru.index')->with('success', 'Guru berhasil dihapus.');
+    }
 }
