@@ -39,6 +39,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+    Route::get('/profile', [AdminController::class, 'view'])->name('admin.profile');
+    Route::post('/resetPassword', [AdminController::class, 'resetPassword'])->name('admin.resetPassword');
 
     Route::controller(ManageGuruController::class)->group(function () {
         Route::get('/manageGuru', 'index')->name('manageGuru.index');
@@ -99,6 +101,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/guru', [GuruController::class, 'index'])->name('guru');
+    Route::get('/profile/guru', [GuruController::class, 'view'])->name('guru.profile');
+    Route::post('/guru/resetPassword', [GuruController::class, 'resetPassword'])->name('guru.resetPassword');
+    Route::post('/guru/update', [GuruController::class, 'update'])->name('guru.update');
 
     Route::controller(GuruMataPelajaranController::class)->group(function () {
         Route::get('/listajar', 'index')->name('guru.listajar.index');

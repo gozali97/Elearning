@@ -37,6 +37,7 @@
                     <i class="bi bi-justify fs-3"></i>
                 </a>
                 <div class="float-end">
+
                     <div class="d-flex align-items-center">
                         <div class="avatar avatar-xl">
                             <img src="{{ url('/assets/img/' . Auth::user()->gambar) }}" alt="Face 1">
